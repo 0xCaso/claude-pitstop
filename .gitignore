@@ -1,0 +1,9 @@
+# Internal working notes (specs, plans, research) stay local
+docs/superpowers/
+
+# Python
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
