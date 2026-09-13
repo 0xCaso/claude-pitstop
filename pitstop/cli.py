@@ -131,11 +131,14 @@ def cmd_mark_pending(args: argparse.Namespace, ctx: Ctx) -> None:
         created_at=ctx.now,
         title=read_session_title(str(transcript)),
         plan=args.plan,
+        project_dir=str(transcript.parent),
     )
     mark_pending(ctx.layout, record)
     log_event(ctx.layout, "cli", "pitstop_done", session_id=session, context_tokens=tokens,
               checkpoint=record.checkpoint)
+    config, _ = load_config(ctx.layout)
     ctx.say("checkpoint registrato: %s" % record.checkpoint)
+    ctx.say("finestra ripartenza: %d minuti" % config.resume_window_minutes)
     ctx.say(messages.done_line(tokens))
 
 
