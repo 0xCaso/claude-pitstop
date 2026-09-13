@@ -105,6 +105,31 @@ class ConsumePendingTest(TempLayoutTestCase):
         self.assertIsNotNone(self.consume(session_id="s-new", cwd="/work/repo", project_dir="/proj/other"))
 
 
+class MarkPendingDedupeTest(TempLayoutTestCase):
+    def test_newer_checkpoint_replaces_older_one_from_same_session(self):
+        mark_pending(self.layout, record(session_id="s1", created_at=NOW - 120, cwd="/work/repo/old",
+                                          project_dir="/proj/p1", checkpoint="/tmp/old.md"))
+        mark_pending(self.layout, record(session_id="s1", created_at=NOW - 60, cwd="/work/repo/new",
+                                          project_dir="/proj/p1", checkpoint="/tmp/new.md"))
+        self.assertEqual(len(list(self.layout.pending_dir.iterdir())), 1)
+
+        first = consume_pending(self.layout, "s-fresh", "/work/repo/other", NOW, 10, project_dir="/proj/p1")
+        self.assertEqual(first.checkpoint, "/tmp/new.md")
+
+        second = consume_pending(self.layout, "s-fresh", "/work/repo/other", NOW, 10, project_dir="/proj/p1")
+        self.assertIsNone(second)
+
+    def test_record_from_other_session_survives(self):
+        mark_pending(self.layout, record(session_id="s2", created_at=NOW - 90, cwd="/work/repo/s2dir",
+                                          project_dir="/proj/p2", checkpoint="/tmp/s2.md"))
+        mark_pending(self.layout, record(session_id="s1", created_at=NOW - 60, cwd="/work/repo/s1dir",
+                                          project_dir="/proj/p1", checkpoint="/tmp/s1.md"))
+        self.assertEqual(len(list(self.layout.pending_dir.iterdir())), 2)
+
+        survivor = consume_pending(self.layout, "s2", "/work/repo/s2dir", NOW, 10)
+        self.assertEqual(survivor.checkpoint, "/tmp/s2.md")
+
+
 class HasPendingTest(TempLayoutTestCase):
     def test_false_when_pending_dir_is_missing(self):
         self.assertFalse(has_pending(self.layout))
