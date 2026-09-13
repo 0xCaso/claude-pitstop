@@ -1,0 +1,13 @@
+{
+  "hooks": {
+    "Stop": [
+      {"hooks": [{"type": "command", "command": "/usr/bin/python3 \"${CLAUDE_PLUGIN_ROOT}/bin/pitstop\" hook stop", "timeout": 10}]}
+    ],
+    "PostToolBatch": [
+      {"hooks": [{"type": "command", "command": "/usr/bin/python3 \"${CLAUDE_PLUGIN_ROOT}/bin/pitstop\" hook post-tool-batch", "timeout": 10}]}
+    ],
+    "UserPromptSubmit": [
+      {"hooks": [{"type": "command", "command": "/usr/bin/python3 \"${CLAUDE_PLUGIN_ROOT}/bin/pitstop\" hook user-prompt-submit", "timeout": 10}]}
+    ]
+  }
+}
