@@ -17,7 +17,7 @@ when a checkpoint would lose something that lives only in the context, such as a
 Requires macOS and `/usr/bin/python3` (3.9+, standard library only).
 
 ```bash
-ln -s "$PWD" ~/.claude/skills/pitstop
+mkdir -p ~/.claude/skills && ln -sfn "$PWD" ~/.claude/skills/pitstop
 claude plugin validate --strict ~/.claude/skills/pitstop
 claude plugin details pitstop
 ```
