@@ -14,7 +14,7 @@ from pitstop.core.fsutil import LockTimeout
 from pitstop.core.log import log_event
 from pitstop.core.paths import Layout
 from pitstop.core.state import SessionState, locked_state
-from pitstop.core.store import consume_pending
+from pitstop.core.store import consume_pending, has_pending
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CLI_PATH = REPO_ROOT / "bin" / "pitstop"
@@ -98,6 +98,15 @@ def _request(inp: HookInput, layout: Layout, notifier: Notifier, config: Config,
     return build_output(output_event, system_message=messages.banner_triggered(tokens), additional_context=context)
 
 
+def _maybe_log_resume_base(layout: Layout, state: SessionState, log_name: str, session_id: str,
+                           tokens: Optional[int]) -> None:
+    """Log the real size of the first turn after a resume, exactly once, whichever hook (Stop or
+    PostToolBatch) sees a valid reading first."""
+    if state.awaiting_resume_base and tokens is not None:
+        state.awaiting_resume_base = False
+        log_event(layout, log_name, "resume_base", session_id=session_id, resume_base=tokens)
+
+
 def _handle_stop(inp: HookInput, layout: Layout, notifier: Notifier, now: float) -> Optional[str]:
     config, config_error = load_config(layout)
     if config_error is not None:
@@ -110,9 +119,7 @@ def _handle_stop(inp: HookInput, layout: Layout, notifier: Notifier, now: float)
         if state.excluded:
             return None
         tokens = _context_tokens(layout, state, "stop", inp.transcript_path)
-        if state.awaiting_resume_base and tokens is not None:
-            state.awaiting_resume_base = False
-            log_event(layout, "stop", "resume_base", session_id=inp.session_id, resume_base=tokens)
+        _maybe_log_resume_base(layout, state, "stop", inp.session_id, tokens)
         event = Event("stop", tokens, stop_hook_active=inp.stop_hook_active)
         if decide(config, state, event).action != REQUEST:
             return None
@@ -135,6 +142,7 @@ def _handle_post_tool_batch(inp: HookInput, layout: Layout, notifier: Notifier, 
             state.last_transcript_size = size
             state.last_context_tokens = _context_tokens(layout, state, "post_tool_batch", inp.transcript_path)
         tokens = state.last_context_tokens
+        _maybe_log_resume_base(layout, state, "post_tool_batch", inp.session_id, tokens)
         if decide(config, state, Event("post_tool_batch", tokens)).action != REQUEST:
             return None
         state.requested_at_tokens = tokens
@@ -150,19 +158,28 @@ def _is_fresh_session(transcript_path: str) -> bool:
 
 
 def _handle_user_prompt_submit(inp: HookInput, layout: Layout, notifier: Notifier, now: float) -> Optional[str]:
+    if not has_pending(layout):
+        return None
     if not _is_fresh_session(inp.transcript_path):
         return None
     # Resume even if pitstop was switched off meanwhile: the checkpoint exists and /clear already happened.
     config, _ = load_config(layout)
-    record = consume_pending(layout, inp.session_id, inp.cwd, now, config.resume_window_minutes)
+    project_dir = str(Path(inp.transcript_path).parent)
+    record = consume_pending(layout, inp.session_id, inp.cwd, now, config.resume_window_minutes,
+                             project_dir=project_dir)
     if record is None:
         return None
-    with locked_state(layout, inp.session_id) as state:
-        state.requested_at_tokens = None
-        state.awaiting_resume_base = True
-        state.last_transcript_size = -1
-        state.last_context_tokens = None
-        state.last_error = None
+    try:
+        with locked_state(layout, inp.session_id) as state:
+            state.requested_at_tokens = None
+            state.awaiting_resume_base = True
+            state.last_transcript_size = -1
+            state.last_context_tokens = None
+            state.last_error = None
+    except (LockTimeout, OSError) as exc:
+        # The checkpoint is still readable even if the fresh session's state could not be reset:
+        # resume_base tracking for the new segment is lost, but the resume itself must not be.
+        log_event(layout, "user_prompt_submit", "error", session_id=inp.session_id, error=_error_category(exc))
     try:
         checkpoint_text = Path(record.checkpoint).read_text(encoding="utf-8")
     except OSError:

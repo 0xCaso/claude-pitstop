@@ -3,6 +3,7 @@ from unittest import mock
 
 from pitstop.claude.hooks import run_hook
 from pitstop.core.config import update_config
+from pitstop.core.fsutil import LockTimeout
 from pitstop.core.log import read_events
 from pitstop.core.state import locked_state
 from pitstop.core.store import PendingRecord, mark_pending
@@ -192,6 +193,44 @@ class ResumeHookTest(HookTestCase):
         self.assertIsNotNone(self.call_hook("stop", session_id="s2", transcript_path=str(fresh)))
         bases = [e["resume_base"] for e in read_events(self.layout) if e["action"] == "resume_base"]
         self.assertEqual(bases, [74000])
+
+    def test_resume_base_is_logged_by_post_tool_batch_when_it_sees_tokens_first(self):
+        self.add_turn(212345)
+        self.assertIsNotNone(self.call_hook("stop"))
+        self.pending()
+        fresh = write_jsonl(self.tmp / "s2.jsonl", [user_line()])
+        self.assertIsNotNone(self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(fresh)))
+        self.add_turn(74000, path=fresh)
+        self.assertIsNone(
+            self.call_hook("post-tool-batch", session_id="s2", transcript_path=str(fresh), tool_calls=[])
+        )
+        self.assertIsNone(self.call_hook("stop", session_id="s2", transcript_path=str(fresh)))
+        base_events = [e for e in read_events(self.layout) if e["action"] == "resume_base"]
+        self.assertEqual(len(base_events), 1)
+        self.assertEqual((base_events[0]["event"], base_events[0]["resume_base"]), ("post_tool_batch", 74000))
+
+    def test_resume_survives_cwd_drift_when_project_dir_matches(self):
+        # The session did `cd web` before the pitstop: the record's cwd is the subfolder, but its
+        # project_dir (the original transcript's folder) is the same folder the fresh session's
+        # transcript lives in, even though the fresh session's own cwd is back at the repo root.
+        self.pending(cwd="/work/repo/web", project_dir=str(self.tmp))
+        fresh = write_jsonl(self.tmp / "s2.jsonl", [user_line()])
+        out = self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(fresh), cwd="/work/repo")
+        self.assertIsNotNone(out)
+
+    def test_state_reset_failure_after_consume_still_returns_resume_output(self):
+        self.pending()
+        fresh = write_jsonl(self.tmp / "s2.jsonl", [user_line()])
+        with mock.patch("pitstop.claude.hooks.locked_state", side_effect=LockTimeout("boom")):
+            out = self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(fresh))
+        self.assertEqual(out["systemMessage"], "🔋 pitstop · ripartito da 212K")
+        self.assertEqual(self.errors(), ["lock_timeout"])
+
+    def test_no_pending_records_skips_the_transcript_read(self):
+        with mock.patch("pitstop.claude.hooks.read_context_tokens") as reader:
+            out = self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(self.tmp / "nope.jsonl"))
+        self.assertIsNone(out)
+        reader.assert_not_called()
 
 
 class FailOpenTest(HookTestCase):

@@ -63,8 +63,9 @@ A `[pitstop]` hook message gives you: mode, context, cwd, background tasks, and 
    `--plan <plan path>` when a superpowers plan is being executed. If it exits non-zero, print
    `🔋 **pitstop** · fallito: <its reason> → continuo qui` and stop the procedure.
 4. Print the last line of its output (`🔋 **pitstop** · fatto a …`) as a line of its own.
-5. Print, as the last line of your reply:
-   `Scrivi /clear, poi un messaggio qualsiasi (per esempio «riprendi»): riparto dal checkpoint entro 10 minuti.`
+5. Print, as the last line of your reply, with N replaced by the window from mark-pending's `finestra
+   ripartenza: N minuti` output line:
+   `Scrivi /clear, poi un messaggio qualsiasi (per esempio «riprendi»): riparto dal checkpoint entro N minuti.`
    Then end your turn. Do not call `mcp__ccd_session_mgmt__clear_session`: the desktop app drops the clear it queues.
 
    The clean session receives the checkpoint by itself: do not paste it anywhere else.

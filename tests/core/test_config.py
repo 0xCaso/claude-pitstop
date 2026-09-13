@@ -8,7 +8,7 @@ from tests.helpers import TempLayoutTestCase
 
 class ParseConfigTest(unittest.TestCase):
     def test_empty_object_gives_defaults(self):
-        self.assertEqual(parse_config({}), Config(True, True, 200000, 50000, 10))
+        self.assertEqual(parse_config({}), Config(True, True, 200000, 50000, 60))
 
     def test_partial_object_overrides_only_given_keys(self):
         config = parse_config({"threshold_tokens": 60000})

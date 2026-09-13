@@ -22,6 +22,7 @@ class PendingRecord:
     created_at: float
     title: Optional[str] = None
     plan: Optional[str] = None
+    project_dir: Optional[str] = None
 
 
 def new_checkpoint_path(layout: Layout, session_id: str, now: float) -> Path:
@@ -50,6 +51,11 @@ def _is_number(value: object) -> bool:
     return isinstance(value, (int, float)) and not isinstance(value, bool)
 
 
+def _is_record_name(path: Path) -> bool:
+    """A visible pending-record file: not a mkstemp temp name or a claimed-but-not-yet-unlinked one."""
+    return path.suffix == ".json" and not path.name.startswith(".")
+
+
 def _read_record(path: Path) -> Optional[PendingRecord]:
     try:
         raw = json.loads(path.read_text(encoding="utf-8"))
@@ -64,6 +70,7 @@ def _read_record(path: Path) -> Optional[PendingRecord]:
         and _is_number(record.created_at)
         and (record.title is None or isinstance(record.title, str))
         and (record.plan is None or isinstance(record.plan, str))
+        and (record.project_dir is None or isinstance(record.project_dir, str))
     )
     return record if valid else None
 
@@ -75,22 +82,31 @@ def _mtime(path: Path) -> float:
         return 0.0
 
 
-def consume_pending(layout: Layout, session_id: str, cwd: str, now: float,
-                    window_minutes: int) -> Optional[PendingRecord]:
+def has_pending(layout: Layout) -> bool:
+    """True if pending/ holds at least one visible record file (a cheap check before reading
+    anything else: callers use it to skip work entirely when nothing is pending)."""
+    try:
+        return any(_is_record_name(p) for p in layout.pending_dir.iterdir())
+    except FileNotFoundError:
+        return False
+
+
+def consume_pending(layout: Layout, session_id: str, cwd: str, now: float, window_minutes: int,
+                    project_dir: Optional[str] = None) -> Optional[PendingRecord]:
     """Take the record for a session that has just been cleared.
 
-    Same session id first; if /clear changed the id, the newest record from the same cwd.
-    Records older than the window expire and are deleted. Consuming is an atomic rename,
-    so a record resumes at most one session."""
+    Same session id first; then the newest record from the same project folder (the parent
+    directory of the session's transcript file, which stays put even if the session's cwd moved
+    mid-run via `cd`); then, as a fallback for records with no project_dir, the newest record from
+    the same cwd. Records older than the window expire and are deleted. Consuming is an atomic
+    rename, so a record resumes at most one session."""
     try:
-        paths = sorted(
-            (p for p in layout.pending_dir.iterdir() if p.suffix == ".json" and not p.name.startswith(".")),
-            reverse=True,
-        )
+        paths = sorted((p for p in layout.pending_dir.iterdir() if _is_record_name(p)), reverse=True)
     except FileNotFoundError:
         return None
     window = window_minutes * 60
     same_id: List[Tuple[Path, PendingRecord]] = []
+    same_project: List[Tuple[Path, PendingRecord]] = []
     same_cwd: List[Tuple[Path, PendingRecord]] = []
     for path in paths:
         record = _read_record(path)
@@ -103,9 +119,12 @@ def consume_pending(layout: Layout, session_id: str, cwd: str, now: float,
             continue
         if record.session_id == session_id:
             same_id.append((path, record))
+        elif (record.project_dir is not None and project_dir is not None
+              and os.path.realpath(record.project_dir) == os.path.realpath(project_dir)):
+            same_project.append((path, record))
         elif os.path.realpath(record.cwd) == os.path.realpath(cwd):
             same_cwd.append((path, record))
-    for path, record in same_id + same_cwd:
+    for path, record in same_id + same_project + same_cwd:
         claimed = path.with_name(".%s.claimed-%s" % (path.name, uuid.uuid4().hex[:8]))
         try:
             os.rename(str(path), str(claimed))

@@ -13,7 +13,7 @@ class Config:
     notify: bool = True
     threshold_tokens: int = 200000
     retrigger_step_tokens: int = 50000
-    resume_window_minutes: int = 10
+    resume_window_minutes: int = 60
 
 
 class ConfigError(Exception):
