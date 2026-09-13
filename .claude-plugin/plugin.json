@@ -2,6 +2,6 @@
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "pitstop",
   "version": "0.1.0",
-  "description": "Checkpoint, clear and resume automatically when the context grows past a threshold",
+  "description": "Checkpoint past a context threshold and resume after /clear",
   "author": { "name": "Matteo Casonato" }
 }

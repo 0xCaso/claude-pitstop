@@ -198,7 +198,8 @@ _COMMANDS = {
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="pitstop", description="Checkpoint, clear and resume Claude Code sessions.")
+    parser = argparse.ArgumentParser(prog="pitstop",
+                                     description="Checkpoint past a context threshold and resume after /clear.")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("hook", help="run a Claude Code hook (event JSON on stdin)").add_argument("event")
     sub.add_parser("on", help="enable pitstop in all sessions")
