@@ -127,7 +127,10 @@ def _handle_post_tool_batch(inp: HookInput, layout: Layout, notifier: Notifier, 
     with locked_state(layout, inp.session_id) as state:
         if state.excluded:
             return None
-        size = os.path.getsize(inp.transcript_path)
+        try:
+            size = os.path.getsize(inp.transcript_path)
+        except OSError:
+            size = -1  # unreadable: _context_tokens reads it and logs the error once per session
         if size != state.last_transcript_size or state.last_context_tokens is None:
             state.last_transcript_size = size
             state.last_context_tokens = _context_tokens(layout, state, "post_tool_batch", inp.transcript_path)

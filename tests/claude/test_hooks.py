@@ -198,7 +198,10 @@ class FailOpenTest(HookTestCase):
     def test_bad_input_unknown_event_and_missing_transcript_fail_open(self):
         self.assertIsNone(run_hook("stop", "not json", self.layout, notifier=self.notifier))
         self.assertIsNone(run_hook("bogus", "{}", self.layout, notifier=self.notifier))
-        self.assertIsNone(self.call_hook("stop", transcript_path=str(self.tmp / "missing.jsonl")))
+        missing = str(self.tmp / "missing.jsonl")
+        self.assertIsNone(self.call_hook("stop", transcript_path=missing))
+        self.assertIsNone(self.call_hook("post-tool-batch", transcript_path=missing))
+        self.assertIsNone(self.call_hook("post-tool-batch", transcript_path=missing))
         self.assertEqual(self.errors(), ["input_error", "unknown_event", "fs_error"])
 
     def test_schema_error_is_logged_once_per_session(self):
