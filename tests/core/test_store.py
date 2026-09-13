@@ -1,4 +1,5 @@
 import stat
+from unittest.mock import patch
 
 from pitstop.core.store import (
     PendingRecord,
@@ -128,6 +129,12 @@ class MarkPendingDedupeTest(TempLayoutTestCase):
 
         survivor = consume_pending(self.layout, "s2", "/work/repo/s2dir", NOW, 10)
         self.assertEqual(survivor.checkpoint, "/tmp/s2.md")
+
+    def test_dedupe_scan_failure_still_returns_the_new_path(self):
+        with patch("pathlib.Path.iterdir", side_effect=OSError("boom")):
+            path = mark_pending(self.layout, record())
+        self.assertTrue(path.exists())
+        self.assertEqual(path.parent, self.layout.pending_dir)
 
 
 class HasPendingTest(TempLayoutTestCase):

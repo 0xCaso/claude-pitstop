@@ -44,13 +44,14 @@ def mark_pending(layout: Layout, record: PendingRecord) -> Path:
     name = "%013d-%s.json" % (int(record.created_at * 1000), uuid.uuid4().hex[:8])
     path = layout.pending_dir / name
     atomic_write_text(path, json.dumps(asdict(record), ensure_ascii=False, indent=2) + "\n")
-    for other in layout.pending_dir.iterdir():
-        if other == path or not _is_record_name(other):
-            continue
-        existing = _read_record(other)
-        if existing is not None and existing.session_id == record.session_id:
-            with contextlib.suppress(OSError):
-                other.unlink()
+    with contextlib.suppress(OSError):
+        for other in layout.pending_dir.iterdir():
+            if other == path or not _is_record_name(other):
+                continue
+            existing = _read_record(other)
+            if existing is not None and existing.session_id == record.session_id:
+                with contextlib.suppress(OSError):
+                    other.unlink()
     return path
 
 
