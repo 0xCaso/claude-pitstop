@@ -21,8 +21,9 @@ class AtomicWriteTest(TempLayoutTestCase):
         self.assertEqual([p.name for p in self.tmp.iterdir() if p.name != "pitstop"], ["c.json"])
 
     def test_ensure_dir_is_private(self):
-        path = ensure_dir(self.tmp / "private")
+        path = ensure_dir(self.tmp / "private" / "nested")
         self.assertEqual(stat.S_IMODE(path.stat().st_mode), 0o700)
+        self.assertEqual(stat.S_IMODE(path.parent.stat().st_mode), 0o700)
 
 
 class AppendLineTest(TempLayoutTestCase):

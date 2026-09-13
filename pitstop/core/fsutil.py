@@ -17,7 +17,11 @@ class LockTimeout(Exception):
 
 
 def ensure_dir(path: Path) -> Path:
-    path.mkdir(mode=DIR_MODE, parents=True, exist_ok=True)
+    """Create the directory and any missing parents, each with DIR_MODE."""
+    if path.is_dir():
+        return path
+    ensure_dir(path.parent)
+    path.mkdir(mode=DIR_MODE, exist_ok=True)
     return path
 
 
