@@ -35,7 +35,7 @@ The plugin loads in the next session as `pitstop@skills-dir`. It does not touch 
 | `/pitstop notify on` · `off` | macOS notifications |
 | `/pitstop gap <what was missing>` | Record something the checkpoint was missing |
 
-The `/` menu shows the skill namespaced as `/pitstop:pitstop`; either form works.
+The `/` menu shows the skill namespaced as `/pitstop:pitstop`.
 
 Emergency switch: `claude plugin disable pitstop@skills-dir`.
 
