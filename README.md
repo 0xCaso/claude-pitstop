@@ -45,7 +45,8 @@ Emergency switch: `claude plugin disable pitstop@skills-dir`.
   once per segment, for a pitstop at the next clean point.
 - The `pitstop` skill writes the checkpoint, registers it and tells the user to run `/clear`.
 - After `/clear`, a `UserPromptSubmit` hook injects the checkpoint once into the first message of the fresh
-  session, in the same folder and within 10 minutes.
+  session, when it is in the same project (even if the working directory changed mid-session, e.g. via `cd`)
+  and starts within the configured resume window (default 60 minutes).
 - Every hook fails open: any error leaves the conversation untouched.
 
 Working files live in `~/.claude/pitstop/`: `config.json`, `state/`, `pending/`, `checkpoints/`, `log.jsonl` and
@@ -61,7 +62,7 @@ Working files live in `~/.claude/pitstop/`: `config.json`, `state/`, `pending/`,
   "notify": true,
   "threshold_tokens": 200000,
   "retrigger_step_tokens": 50000,
-  "resume_window_minutes": 10
+  "resume_window_minutes": 60
 }
 ```
 
