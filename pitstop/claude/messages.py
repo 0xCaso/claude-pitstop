@@ -1,4 +1,5 @@
 """Everything pitstop says. User-facing text is Italian; instructions for the model are English."""
+import time
 from typing import Optional
 
 from pitstop.core.store import PendingRecord
@@ -25,6 +26,10 @@ def banner_config_invalid(error: str) -> str:
 
 def banner_checkpoint_missing() -> str:
     return "🔋 pitstop · checkpoint non trovato, riparto senza"
+
+
+def banner_checkpoint_expired() -> str:
+    return "🔋 pitstop · checkpoint scaduto, riparto senza"
 
 
 def notify_triggered(tokens: int) -> str:
@@ -103,3 +108,19 @@ def resume_context(record: PendingRecord, checkpoint_text: str, cli: str) -> str
     if record.plan:
         base += "5. A superpowers plan is being executed: resume the plan `%s` from its ledger with superpowers:subagent-driven-development.\n" % record.plan
     return base
+
+
+def expired_line(hhmm: str, checkpoint: str) -> str:
+    return ("🔋 **pitstop** · checkpoint scaduto (fatto alle %s): %s — scrivi «riprendi dal checkpoint» "
+            "per ripartire da lì" % (hhmm, checkpoint))
+
+
+def expired_context(record: PendingRecord) -> str:
+    hhmm = time.strftime("%H:%M", time.localtime(record.created_at))
+    return (
+        "[pitstop] pitstop found a checkpoint matching this session that expired, created at {hhmm} local "
+        "time. Checkpoint file: {path}\n\n"
+        "As the first line of your reply, print exactly `{line}`, then answer the user's message normally. "
+        "If the user later asks to resume from it, Read {path} and follow the \"Resuming\" steps of the "
+        "pitstop skill.\n"
+    ).format(hhmm=hhmm, path=record.checkpoint, line=expired_line(hhmm, record.checkpoint))

@@ -12,6 +12,11 @@ from pitstop.core.fsutil import atomic_write_text, ensure_dir
 from pitstop.core.paths import Layout
 from pitstop.core.state import session_key
 
+# A record past the resume window is not resumed, but it is not deleted right away either: it stays
+# around long enough for the fresh session to be told it expired (see consume_expired_pending), up to
+# this horizon. Past the horizon it is deleted silently by the sweep, like an expired record always was.
+EXPIRED_NOTICE_HORIZON_SECONDS = 24 * 60 * 60
+
 
 @dataclass(frozen=True)
 class PendingRecord:
@@ -99,32 +104,39 @@ def has_pending(layout: Layout) -> bool:
         return False
 
 
-def consume_pending(layout: Layout, session_id: str, cwd: str, now: float, window_minutes: int,
-                    project_dir: Optional[str] = None) -> Optional[PendingRecord]:
-    """Take the record for a session that has just been cleared.
+def _list_records(layout: Layout) -> List[Path]:
+    return sorted((p for p in layout.pending_dir.iterdir() if _is_record_name(p)), reverse=True)
 
-    Same session id first; then the newest record from the same project folder (the parent
-    directory of the session's transcript file, which stays put even if the session's cwd moved
-    mid-run via `cd`); then, as a fallback for records with no project_dir, the newest record from
-    the same cwd. Records older than the window expire and are deleted. Consuming is an atomic
-    rename, so a record resumes at most one session."""
-    try:
-        paths = sorted((p for p in layout.pending_dir.iterdir() if _is_record_name(p)), reverse=True)
-    except FileNotFoundError:
-        return None
-    window = window_minutes * 60
-    same_id: List[Tuple[Path, PendingRecord]] = []
-    same_project: List[Tuple[Path, PendingRecord]] = []
-    same_cwd: List[Tuple[Path, PendingRecord]] = []
+
+def _sweep(paths: List[Path], now: float, window: float) -> List[Tuple[Path, PendingRecord, float]]:
+    """Delete what today's handling always deleted (an unreadable record past the window, or any
+    record past the 24h notice horizon) and return the rest as (path, record, age) triples, newest
+    first, for the caller to split into "still valid" and "expired but within the notice horizon"."""
+    survivors = []
     for path in paths:
         record = _read_record(path)
-        created = record.created_at if record is not None else _mtime(path)
-        if now - created > window:
+        if record is None:
+            if now - _mtime(path) > window:
+                with contextlib.suppress(OSError):
+                    path.unlink()
+            continue
+        age = now - record.created_at
+        if age > EXPIRED_NOTICE_HORIZON_SECONDS:
             with contextlib.suppress(OSError):
                 path.unlink()
             continue
-        if record is None:
-            continue
+        survivors.append((path, record, age))
+    return survivors
+
+
+def _match_levels(pairs: List[Tuple[Path, PendingRecord]], session_id: str, cwd: str,
+                  project_dir: Optional[str]) -> List[Tuple[Path, PendingRecord]]:
+    """Group by match level (same session id, then project folder, then cwd) and concatenate in that
+    priority order; each level keeps the newest-first order it was given in."""
+    same_id: List[Tuple[Path, PendingRecord]] = []
+    same_project: List[Tuple[Path, PendingRecord]] = []
+    same_cwd: List[Tuple[Path, PendingRecord]] = []
+    for path, record in pairs:
         if record.session_id == session_id:
             same_id.append((path, record))
         elif (record.project_dir is not None and project_dir is not None
@@ -132,13 +144,61 @@ def consume_pending(layout: Layout, session_id: str, cwd: str, now: float, windo
             same_project.append((path, record))
         elif os.path.realpath(record.cwd) == os.path.realpath(cwd):
             same_cwd.append((path, record))
-    for path, record in same_id + same_project + same_cwd:
-        claimed = path.with_name(".%s.claimed-%s" % (path.name, uuid.uuid4().hex[:8]))
-        try:
-            os.rename(str(path), str(claimed))
-        except FileNotFoundError:
+    return same_id + same_project + same_cwd
+
+
+def _claim(path: Path) -> bool:
+    """Atomically take a record file so it resumes (or is announced) at most once."""
+    claimed = path.with_name(".%s.claimed-%s" % (path.name, uuid.uuid4().hex[:8]))
+    try:
+        os.rename(str(path), str(claimed))
+    except FileNotFoundError:
+        return False
+    with contextlib.suppress(OSError):
+        claimed.unlink()
+    return True
+
+
+def consume_pending(layout: Layout, session_id: str, cwd: str, now: float, window_minutes: int,
+                    project_dir: Optional[str] = None) -> Optional[PendingRecord]:
+    """Take the record for a session that has just been cleared.
+
+    Same session id first; then the newest record from the same project folder (the parent
+    directory of the session's transcript file, which stays put even if the session's cwd moved
+    mid-run via `cd`); then, as a fallback for records with no project_dir, the newest record from
+    the same cwd. Records older than the window are left in place (see consume_expired_pending)
+    rather than resumed; records past the 24h notice horizon are deleted outright. Consuming is an
+    atomic rename, so a record resumes at most one session."""
+    try:
+        paths = _list_records(layout)
+    except FileNotFoundError:
+        return None
+    window = window_minutes * 60
+    valid = [(path, record) for path, record, age in _sweep(paths, now, window) if age <= window]
+    for path, record in _match_levels(valid, session_id, cwd, project_dir):
+        if _claim(path):
+            return record
+    return None
+
+
+def consume_expired_pending(layout: Layout, session_id: str, cwd: str, now: float, window_minutes: int,
+                            project_dir: Optional[str] = None) -> Optional[PendingRecord]:
+    """The counterpart to consume_pending for the "checkpoint scaduto" notice: finds the newest record
+    that matches this session the same way a resume would (same session id, then project folder, then
+    cwd) but has expired — past the window, still within the 24h notice horizon — claims it the same
+    atomic way, and returns it. A record whose checkpoint file no longer exists is dropped silently
+    and the search continues with the next match. Returns None if nothing in the notice horizon
+    matches; a still-valid record is consume_pending's job, not this one's."""
+    try:
+        paths = _list_records(layout)
+    except FileNotFoundError:
+        return None
+    window = window_minutes * 60
+    expired = [(path, record) for path, record, age in _sweep(paths, now, window) if age > window]
+    for path, record in _match_levels(expired, session_id, cwd, project_dir):
+        if not _claim(path):
             continue
-        with contextlib.suppress(OSError):
-            claimed.unlink()
+        if not os.path.exists(record.checkpoint):
+            continue
         return record
     return None

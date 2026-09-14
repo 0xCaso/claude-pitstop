@@ -1,4 +1,5 @@
 import json
+import time
 from unittest import mock
 
 from pitstop.claude.hooks import run_hook
@@ -6,7 +7,7 @@ from pitstop.core.config import update_config
 from pitstop.core.fsutil import LockTimeout
 from pitstop.core.log import read_events
 from pitstop.core.state import locked_state
-from pitstop.core.store import PendingRecord, mark_pending
+from pitstop.core.store import EXPIRED_NOTICE_HORIZON_SECONDS, PendingRecord, mark_pending
 from tests.helpers import NOW, TempLayoutTestCase, assistant_line, user_line, write_jsonl
 
 EVENT_NAMES = {"stop": "Stop", "post-tool-batch": "PostToolBatch", "user-prompt-submit": "UserPromptSubmit"}
@@ -161,11 +162,13 @@ class ResumeHookTest(HookTestCase):
         self.assertIsNone(self.call_hook("user-prompt-submit", session_id="s1", transcript_path=str(self.transcript)))
         fresh = write_jsonl(self.tmp / "s2.jsonl", [user_line()])
         self.assertIsNotNone(self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(fresh)))
-        # separately: a fresh prompt outside the resume window does not resume either
+        # separately: a fresh prompt well past the resume window (and the 24h notice horizon) does not
+        # resume, and gets no expired-checkpoint notice either — see ExpiredNoticeHookTest for the
+        # notice case, when the record is past the window but still inside the horizon.
         self.pending()
         fresh2 = write_jsonl(self.tmp / "s3.jsonl", [user_line()])
         self.assertIsNone(
-            self.call_hook("user-prompt-submit", session_id="s3", transcript_path=str(fresh2), now=NOW + 3600)
+            self.call_hook("user-prompt-submit", session_id="s3", transcript_path=str(fresh2), now=NOW + 90000)
         )
 
     def test_resume_works_even_when_disabled(self):
@@ -231,6 +234,79 @@ class ResumeHookTest(HookTestCase):
             out = self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(self.tmp / "nope.jsonl"))
         self.assertIsNone(out)
         reader.assert_not_called()
+
+
+class ExpiredNoticeHookTest(HookTestCase):
+    """A record past the resume window but still inside the 24h notice horizon: instead of silence,
+    the fresh session gets a one-line "checkpoint scaduto" notice and can ask to resume from it."""
+
+    def pending(self, **overrides):
+        checkpoint = self.tmp / "cp.md"
+        checkpoint.write_text("# Checkpoint\nprossima azione: X", encoding="utf-8")
+        values = dict(checkpoint=str(checkpoint), session_id="s1", cwd="/work/repo", context_tokens=212000,
+                      created_at=NOW - 3700, title="Titolo", plan=None)  # past the 60min default window
+        values.update(overrides)
+        mark_pending(self.layout, PendingRecord(**values))
+        return str(checkpoint)
+
+    def test_expired_within_horizon_gets_notice_and_is_claimed_once(self):
+        checkpoint = self.pending()
+        fresh = write_jsonl(self.tmp / "s2.jsonl", [user_line()])
+        out = self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(fresh))
+        self.assertEqual(out["systemMessage"], "🔋 pitstop · checkpoint scaduto, riparto senza")
+        specific = out["hookSpecificOutput"]
+        self.assertEqual(specific["hookEventName"], "UserPromptSubmit")
+        self.assertNotIn("sessionTitle", specific)
+        self.assertNotIn("initialUserMessage", specific)
+        context = specific["additionalContext"]
+        self.assertIn(checkpoint, context)
+        self.assertIn("riprendi dal checkpoint", context)
+        self.assertIn("«riprendi dal checkpoint»", context)
+        # HH:MM of created_at (NOW - 3700), local time
+        hhmm = time.strftime("%H:%M", time.localtime(NOW - 3700))
+        self.assertIn(hhmm, context)
+        self.assertEqual(self.notes, [])  # no macOS notification
+        # claimed: a second prompt sees nothing left to announce
+        self.assertIsNone(self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(fresh)))
+        events = read_events(self.layout)
+        self.assertEqual([e["action"] for e in events], ["resume_expired"])
+        self.assertEqual(events[0]["event"], "user_prompt_submit")
+        self.assertEqual(events[0]["checkpoint"], checkpoint)
+
+    def test_record_past_the_notice_horizon_is_dropped_silently(self):
+        self.pending(created_at=NOW - EXPIRED_NOTICE_HORIZON_SECONDS - 60)
+        fresh = write_jsonl(self.tmp / "s2.jsonl", [user_line()])
+        self.assertIsNone(self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(fresh)))
+        self.assertEqual(list(self.layout.pending_dir.iterdir()), [])
+
+    def test_expired_record_from_another_project_is_neither_announced_nor_deleted(self):
+        self.pending(cwd="/work/other", project_dir="/proj/other")
+        fresh = write_jsonl(self.tmp / "s2.jsonl", [user_line()])
+        self.assertIsNone(self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(fresh)))
+        self.assertEqual(len(list(self.layout.pending_dir.iterdir())), 1)
+
+    def test_non_fresh_session_gets_no_notice_and_record_stays(self):
+        self.pending()
+        self.add_turn(100000)  # self.transcript now has a reply: no longer a fresh session
+        self.assertIsNone(self.call_hook("user-prompt-submit", session_id="s1", transcript_path=str(self.transcript)))
+        self.assertEqual(len(list(self.layout.pending_dir.iterdir())), 1)
+
+    def test_valid_record_wins_over_expired_one(self):
+        self.pending(session_id="s1")  # expired
+        checkpoint = self.tmp / "valid.md"
+        checkpoint.write_text("# Checkpoint\nprossima azione: Y", encoding="utf-8")
+        mark_pending(self.layout, PendingRecord(checkpoint=str(checkpoint), session_id="s1", cwd="/work/repo",
+                                                 context_tokens=180000, created_at=NOW - 60, title=None, plan=None))
+        fresh = write_jsonl(self.tmp / "s2.jsonl", [user_line()])
+        out = self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(fresh))
+        self.assertEqual(out["systemMessage"], "🔋 pitstop · ripartito da 180K")
+        self.assertIn("prossima azione: Y", out["hookSpecificOutput"]["additionalContext"])
+
+    def test_missing_checkpoint_file_drops_the_record_silently(self):
+        self.pending(checkpoint=str(self.tmp / "gone.md"))
+        fresh = write_jsonl(self.tmp / "s2.jsonl", [user_line()])
+        self.assertIsNone(self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(fresh)))
+        self.assertEqual(list(self.layout.pending_dir.iterdir()), [])
 
 
 class FailOpenTest(HookTestCase):

@@ -2,7 +2,9 @@ import stat
 from unittest.mock import patch
 
 from pitstop.core.store import (
+    EXPIRED_NOTICE_HORIZON_SECONDS,
     PendingRecord,
+    consume_expired_pending,
     consume_pending,
     has_pending,
     mark_pending,
@@ -62,8 +64,16 @@ class ConsumePendingTest(TempLayoutTestCase):
         mark_pending(self.layout, record(session_id="b", created_at=NOW - 30, checkpoint="/tmp/new.md"))
         self.assertEqual(self.consume(session_id="s-new").checkpoint, "/tmp/new.md")
 
-    def test_expired_record_is_deleted_not_consumed(self):
+    def test_expired_record_within_notice_horizon_is_not_consumed_but_kept(self):
+        # Past the window (600s) but still inside the 24h notice horizon: consume_pending must not
+        # resume it, but it also must not delete it — consume_expired_pending needs it to still be
+        # there to build the "checkpoint scaduto" notice.
         mark_pending(self.layout, record(created_at=NOW - 601))
+        self.assertIsNone(self.consume())
+        self.assertEqual(len(list(self.layout.pending_dir.iterdir())), 1)
+
+    def test_expired_record_past_the_notice_horizon_is_deleted_not_consumed(self):
+        mark_pending(self.layout, record(created_at=NOW - EXPIRED_NOTICE_HORIZON_SECONDS - 1))
         self.assertIsNone(self.consume())
         self.assertEqual(list(self.layout.pending_dir.iterdir()), [])
 
@@ -104,6 +114,58 @@ class ConsumePendingTest(TempLayoutTestCase):
     def test_record_without_project_dir_still_resumes_on_cwd_equality(self):
         mark_pending(self.layout, record(cwd="/work/repo"))  # no project_dir override: stays None
         self.assertIsNotNone(self.consume(session_id="s-new", cwd="/work/repo", project_dir="/proj/other"))
+
+
+class ConsumeExpiredPendingTest(TempLayoutTestCase):
+    """The counterpart to consume_pending used for the "checkpoint scaduto" notice: matches the same
+    way a resume would, but only for records past the window and still inside the 24h horizon."""
+
+    def checkpoint(self):
+        path = self.tmp / "cp.md"
+        path.write_text("# Checkpoint", encoding="utf-8")
+        return str(path)
+
+    def consume(self, session_id="s-old", cwd="/work/repo", now=NOW, window=10, project_dir=None):
+        return consume_expired_pending(self.layout, session_id, cwd, now, window, project_dir=project_dir)
+
+    def test_no_pending_dir_returns_none(self):
+        self.assertIsNone(self.consume())
+
+    def test_expired_matching_record_is_claimed(self):
+        cp = self.checkpoint()
+        mark_pending(self.layout, record(checkpoint=cp, created_at=NOW - 1800))
+        matched = self.consume()
+        self.assertEqual(matched, record(checkpoint=cp, created_at=NOW - 1800))
+        self.assertEqual(list(self.layout.pending_dir.iterdir()), [])
+
+    def test_still_valid_record_is_left_for_consume_pending(self):
+        mark_pending(self.layout, record(checkpoint=self.checkpoint(), created_at=NOW - 60))  # within window
+        self.assertIsNone(self.consume())
+        self.assertEqual(len(list(self.layout.pending_dir.iterdir())), 1)
+
+    def test_record_past_the_notice_horizon_is_deleted_not_returned(self):
+        mark_pending(self.layout, record(checkpoint=self.checkpoint(),
+                                          created_at=NOW - EXPIRED_NOTICE_HORIZON_SECONDS - 1))
+        self.assertIsNone(self.consume())
+        self.assertEqual(list(self.layout.pending_dir.iterdir()), [])
+
+    def test_non_matching_cwd_and_project_is_left_in_place(self):
+        mark_pending(self.layout, record(checkpoint=self.checkpoint(), created_at=NOW - 1800, cwd="/work/other"))
+        self.assertIsNone(self.consume(session_id="s-new", cwd="/work/repo"))
+        self.assertEqual(len(list(self.layout.pending_dir.iterdir())), 1)
+
+    def test_missing_checkpoint_file_is_dropped_silently(self):
+        mark_pending(self.layout, record(checkpoint=str(self.tmp / "gone.md"), created_at=NOW - 1800))
+        self.assertIsNone(self.consume())
+        self.assertEqual(list(self.layout.pending_dir.iterdir()), [])
+
+    def test_newest_matching_record_wins(self):
+        mark_pending(self.layout, record(session_id="a", checkpoint=self.checkpoint(), created_at=NOW - 3600))
+        newer = self.tmp / "newer.md"
+        newer.write_text("# Newer", encoding="utf-8")
+        mark_pending(self.layout, record(session_id="b", checkpoint=str(newer), created_at=NOW - 1800))
+        matched = self.consume(session_id="s-new")
+        self.assertEqual(matched.checkpoint, str(newer))
 
 
 class MarkPendingDedupeTest(TempLayoutTestCase):

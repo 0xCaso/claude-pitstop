@@ -47,6 +47,8 @@ Emergency switch: `claude plugin disable pitstop@skills-dir`.
 - After `/clear`, a `UserPromptSubmit` hook injects the checkpoint once into the first message of the fresh
   session, when it is in the same project (even if the working directory changed mid-session, e.g. via `cd`)
   and starts within the configured resume window (default 60 minutes).
+- A matching checkpoint found past that window, but still under 24 hours old, is not resumed automatically
+  but gets a one-line "checkpoint scaduto" notice instead of silence, with the path to resume from it.
 - Every hook fails open: any error leaves the conversation untouched.
 
 Working files live in `~/.claude/pitstop/`: `config.json`, `state/`, `pending/`, `checkpoints/`, `log.jsonl` and

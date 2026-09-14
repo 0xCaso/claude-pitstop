@@ -107,3 +107,7 @@ The first message after `/clear` (any text) arrives with a `[pitstop]` checkpoin
 message: re-read only the cited files the next action needs, print `🔋 **pitstop** · ripartito da <K> · Dove eravamo:`
 with three short lines (goal, state, next action), then continue. If something is missing, run
 `pitstop gap "<what was missing>"` and recover it.
+
+If the checkpoint had already expired (past the resume window but under 24 hours old), that first message
+instead carries a one-line notice with its path; answer normally and, only if the user later replies
+«riprendi dal checkpoint», read that file and follow these same steps.

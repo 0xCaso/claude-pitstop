@@ -14,7 +14,7 @@ from pitstop.core.fsutil import LockTimeout
 from pitstop.core.log import log_event
 from pitstop.core.paths import Layout
 from pitstop.core.state import SessionState, locked_state
-from pitstop.core.store import consume_pending, has_pending
+from pitstop.core.store import consume_expired_pending, consume_pending, has_pending
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CLI_PATH = REPO_ROOT / "bin" / "pitstop"
@@ -168,7 +168,17 @@ def _handle_user_prompt_submit(inp: HookInput, layout: Layout, notifier: Notifie
     record = consume_pending(layout, inp.session_id, inp.cwd, now, config.resume_window_minutes,
                              project_dir=project_dir)
     if record is None:
-        return None
+        expired = consume_expired_pending(layout, inp.session_id, inp.cwd, now, config.resume_window_minutes,
+                                          project_dir=project_dir)
+        if expired is None:
+            return None
+        log_event(layout, "user_prompt_submit", "resume_expired", session_id=inp.session_id,
+                  checkpoint=expired.checkpoint)
+        return build_output(
+            "UserPromptSubmit",
+            system_message=messages.banner_checkpoint_expired(),
+            additional_context=messages.expired_context(expired),
+        )
     try:
         with locked_state(layout, inp.session_id) as state:
             state.requested_at_tokens = None
