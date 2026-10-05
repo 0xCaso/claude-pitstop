@@ -1,0 +1,1 @@
+{ "name": "pitstop-spike", "version": "0.0.1", "description": "Spike: pitstop as a Claude Code mod (compact into the checkpoint on the next prompt)", "types": "./types/index.d.ts" }
