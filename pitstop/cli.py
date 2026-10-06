@@ -27,6 +27,7 @@ from pitstop.core.state import load_state, locked_state
 from pitstop.core.store import PendingRecord, mark_pending, new_checkpoint_path, write_checkpoint
 
 SESSION_ENV = "CLAUDE_CODE_SESSION_ID"
+ENTRYPOINT_ENV = "CLAUDE_CODE_ENTRYPOINT"
 
 
 class CliError(Exception):
@@ -139,6 +140,8 @@ def cmd_mark_pending(args: argparse.Namespace, ctx: Ctx) -> None:
     config, _ = load_config(ctx.layout)
     ctx.say("checkpoint registrato: %s" % record.checkpoint)
     ctx.say("finestra ripartenza: %d minuti" % config.resume_window_minutes)
+    # SDK hosts (T3 Code) have no /clear: there the session compacts and resumes in place.
+    ctx.say("ripartenza: %s" % ("compact" if ctx.env.get(ENTRYPOINT_ENV, "").startswith("sdk") else "clear"))
     ctx.say(messages.done_line(tokens))
 
 

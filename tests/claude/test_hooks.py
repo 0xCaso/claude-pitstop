@@ -10,7 +10,8 @@ from pitstop.core.state import locked_state
 from pitstop.core.store import EXPIRED_NOTICE_HORIZON_SECONDS, PendingRecord, mark_pending
 from tests.helpers import NOW, TempLayoutTestCase, assistant_line, user_line, write_jsonl
 
-EVENT_NAMES = {"stop": "Stop", "post-tool-batch": "PostToolBatch", "user-prompt-submit": "UserPromptSubmit"}
+EVENT_NAMES = {"stop": "Stop", "post-tool-batch": "PostToolBatch", "user-prompt-submit": "UserPromptSubmit",
+               "session-start": "SessionStart"}
 
 
 class HookTestCase(TempLayoutTestCase):
@@ -114,7 +115,7 @@ class PostToolBatchHookTest(HookTestCase):
         self.assertIsNotNone(self.call_hook("post-tool-batch"))
 
 
-class ResumeHookTest(HookTestCase):
+class PendingMixin:
     def pending(self, **overrides):
         checkpoint = self.tmp / "cp.md"
         checkpoint.write_text("# Checkpoint\nprossima azione: X", encoding="utf-8")
@@ -123,6 +124,8 @@ class ResumeHookTest(HookTestCase):
         values.update(overrides)
         mark_pending(self.layout, PendingRecord(**values))
 
+
+class ResumeHookTest(PendingMixin, HookTestCase):
     def test_resume_injects_checkpoint_once(self):
         self.pending()
         fresh = write_jsonl(self.tmp / "s2.jsonl", [user_line()])
@@ -338,3 +341,49 @@ class FailOpenTest(HookTestCase):
             raise RuntimeError("boom")
         self.add_turn(300000)
         self.assertIsNotNone(self.call_hook("stop", notifier=broken))
+
+
+class CompactResumeHookTest(PendingMixin, HookTestCase):
+    """After /compact the same session restarts from its own checkpoint (SessionStart, source compact)."""
+
+    def setUp(self):
+        super().setUp()
+        self.add_turn(212000)  # the compacted session has replies: UserPromptSubmit would not resume it
+
+    def test_compact_injects_own_checkpoint_once(self):
+        self.pending()
+        out = self.call_hook("session-start", source="compact")
+        specific = out["hookSpecificOutput"]
+        self.assertEqual(out["systemMessage"], "🔋 pitstop · ripartito da 212K")
+        self.assertEqual(specific["hookEventName"], "SessionStart")
+        self.assertIn("prossima azione: X", specific["additionalContext"])
+        self.assertNotIn("sessionTitle", specific)
+        self.assertEqual(self.notes, [("pitstop", "Ripartito da 212K")])
+        self.assertIsNone(self.call_hook("session-start", source="compact"))
+        self.assertIsNone(self.call_hook("user-prompt-submit"))
+        self.assertEqual([e["action"] for e in read_events(self.layout)], ["resume"])
+        with locked_state(self.layout, "s1") as state:
+            self.assertTrue(state.awaiting_resume_base)
+            self.assertIsNone(state.requested_at_tokens)
+
+    def test_other_sources_are_ignored(self):
+        self.pending()
+        for source in ("startup", "resume", "clear"):
+            with self.subTest(source=source):
+                self.assertIsNone(self.call_hook("session-start", source=source))
+        self.assertIsNone(self.call_hook("session-start"))
+
+    def test_checkpoint_of_another_session_in_the_same_project_is_not_taken(self):
+        self.pending(session_id="s0")
+        self.assertIsNone(self.call_hook("session-start", source="compact"))
+        fresh = write_jsonl(self.tmp / "s2.jsonl", [user_line()])
+        self.assertIsNotNone(self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(fresh)))
+
+    def test_expired_checkpoint_is_not_injected_or_announced(self):
+        self.pending(created_at=NOW - 3 * 60 * 60)
+        self.assertIsNone(self.call_hook("session-start", source="compact"))
+        self.assertEqual(read_events(self.layout), [])
+
+    def test_subagent_compaction_is_ignored(self):
+        self.pending()
+        self.assertIsNone(self.call_hook("session-start", source="compact", agent_id="a1"))

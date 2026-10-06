@@ -74,6 +74,18 @@ class MarkPendingTest(CliTestCase):
                          (212010, "Piano pitstop", "/work/repo", None))
         self.assertEqual([e["action"] for e in read_events(self.layout)], ["pitstop_done"])
 
+    def test_restart_mode_follows_the_entrypoint(self):
+        checkpoint = self.tmp / "cp.md"
+        checkpoint.write_text("# Checkpoint", encoding="utf-8")
+        for entrypoint, mode in (("sdk-ts", "compact"), ("sdk-py", "compact"), ("cli", "clear"), (None, "clear")):
+            with self.subTest(entrypoint=entrypoint):
+                env = dict(SESSION_ENV)
+                if entrypoint is not None:
+                    env["CLAUDE_CODE_ENTRYPOINT"] = entrypoint
+                code, out = self.cli("mark-pending", "--checkpoint", str(checkpoint), env=env)
+                self.assertEqual(code, 0)
+                self.assertIn("ripartenza: %s\n" % mode, out)
+
     def test_cwd_defaults_to_transcript_and_plan_is_kept(self):
         checkpoint = self.tmp / "cp.md"
         checkpoint.write_text("# Checkpoint", encoding="utf-8")

@@ -13,9 +13,10 @@ class PluginFilesTest(unittest.TestCase):
 
     def test_hooks_call_bin_pitstop_with_system_python(self):
         hooks = json.loads((REPO_ROOT / "hooks" / "hooks.json").read_text(encoding="utf-8"))["hooks"]
-        self.assertEqual(set(hooks), {"Stop", "PostToolBatch", "UserPromptSubmit"})
+        self.assertEqual(set(hooks), {"Stop", "PostToolBatch", "UserPromptSubmit", "SessionStart"})
+        self.assertEqual(hooks["SessionStart"][0]["matcher"], "compact")
         for event, arg in (("Stop", "stop"), ("PostToolBatch", "post-tool-batch"),
-                           ("UserPromptSubmit", "user-prompt-submit")):
+                           ("UserPromptSubmit", "user-prompt-submit"), ("SessionStart", "session-start")):
             with self.subTest(event=event):
                 command = hooks[event][0]["hooks"][0]["command"]
                 self.assertEqual(command, '/usr/bin/python3 "${CLAUDE_PLUGIN_ROOT}/bin/pitstop" hook ' + arg)
@@ -25,7 +26,8 @@ class PluginFilesTest(unittest.TestCase):
         self.assertTrue(text.startswith("---\nname: pitstop\n"))
         for needle in ("## Commands", "## Automatic pitstop", "## Manual pitstop", "## Checkpoint procedure",
                        "## Checkpoint content", "## Resuming", "🔋 **pitstop** · saltato:",
-                       "Scrivi /clear", "/usr/bin/python3 ~/.claude/skills/pitstop/bin/pitstop"):
+                       "Scrivi /clear", "ripartenza: compact", "t3_thread_send", "Compact context",
+                       "/usr/bin/python3 ~/.claude/skills/pitstop/bin/pitstop"):
             with self.subTest(needle=needle):
                 self.assertIn(needle, text)
 

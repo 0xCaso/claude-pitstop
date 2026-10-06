@@ -160,7 +160,7 @@ def _claim(path: Path) -> bool:
 
 
 def consume_pending(layout: Layout, session_id: str, cwd: str, now: float, window_minutes: int,
-                    project_dir: Optional[str] = None) -> Optional[PendingRecord]:
+                    project_dir: Optional[str] = None, same_session_only: bool = False) -> Optional[PendingRecord]:
     """Take the record for a session that has just been cleared.
 
     Same session id first; then the newest record from the same project folder (the parent
@@ -168,13 +168,18 @@ def consume_pending(layout: Layout, session_id: str, cwd: str, now: float, windo
     mid-run via `cd`); then, as a fallback for records with no project_dir, the newest record from
     the same cwd. Records older than the window are left in place (see consume_expired_pending)
     rather than resumed; records past the 24h notice horizon are deleted outright. Consuming is an
-    atomic rename, so a record resumes at most one session."""
+    atomic rename, so a record resumes at most one session.
+
+    same_session_only: only the session's own record, for a session that compacted rather than
+    cleared (another session's checkpoint is meant for a fresh session, not for this one)."""
     try:
         paths = _list_records(layout)
     except FileNotFoundError:
         return None
     window = window_minutes * 60
     valid = [(path, record) for path, record, age in _sweep(paths, now, window) if age <= window]
+    if same_session_only:
+        valid = [(path, record) for path, record in valid if record.session_id == session_id]
     for path, record in _match_levels(valid, session_id, cwd, project_dir):
         if _claim(path):
             return record

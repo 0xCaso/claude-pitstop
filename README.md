@@ -4,7 +4,8 @@ A local Claude Code plugin that keeps long sessions cheap without losing the thr
 
 When the main conversation grows past 200K tokens, pitstop asks Claude to save a compact checkpoint at the next
 clean point and tells you to run `/clear`. The first message you send after that resumes from the checkpoint
-automatically.
+automatically. In T3 Code, where `/clear` does not exist, Claude queues a `/compact` on its own thread instead,
+and the compacted conversation resumes from the checkpoint.
 
 ## Why
 
@@ -43,10 +44,15 @@ Emergency switch: `claude plugin disable pitstop@skills-dir`.
 
 - `Stop` and `PostToolBatch` hooks read the context size from the transcript. Past the threshold they ask Claude,
   once per segment, for a pitstop at the next clean point.
-- The `pitstop` skill writes the checkpoint, registers it and tells the user to run `/clear`.
+- The `pitstop` skill writes the checkpoint, registers it and tells the user to run `/clear`. In SDK hosts such as
+  T3 Code (`CLAUDE_CODE_ENTRYPOINT=sdk-*`) it queues `/compact` on its own thread with T3 Code's
+  `t3_thread_send` tool instead, asking for a one-line summary; without that tool it asks you to press
+  "Compact context".
 - After `/clear`, a `UserPromptSubmit` hook injects the checkpoint once into the first message of the fresh
   session, when it is in the same project (even if the working directory changed mid-session, e.g. via `cd`)
   and starts within the configured resume window (default 60 minutes).
+- After `/compact`, a `SessionStart` hook (matcher `compact`) injects the session's own checkpoint once, within
+  the same window. It never takes another session's checkpoint.
 - A matching checkpoint found past that window, but still under 24 hours old, is not resumed automatically
   but gets a one-line "checkpoint scaduto" notice instead of silence, with the path to resume from it.
 - Every hook fails open: any error leaves the conversation untouched.

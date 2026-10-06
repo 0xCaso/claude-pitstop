@@ -14,7 +14,7 @@ from pitstop.core.fsutil import LockTimeout
 from pitstop.core.log import log_event
 from pitstop.core.paths import Layout
 from pitstop.core.state import SessionState, locked_state
-from pitstop.core.store import consume_expired_pending, consume_pending, has_pending
+from pitstop.core.store import PendingRecord, consume_expired_pending, consume_pending, has_pending
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CLI_PATH = REPO_ROOT / "bin" / "pitstop"
@@ -179,6 +179,24 @@ def _handle_user_prompt_submit(inp: HookInput, layout: Layout, notifier: Notifie
             system_message=messages.banner_checkpoint_expired(),
             additional_context=messages.expired_context(expired),
         )
+    return _resume(inp, layout, notifier, config, record, "UserPromptSubmit", "user_prompt_submit")
+
+
+def _handle_session_start(inp: HookInput, layout: Layout, notifier: Notifier, now: float) -> Optional[str]:
+    """After /compact (the restart available where /clear is not, e.g. T3 Code): the same session
+    picks up its own checkpoint. Expired records are left alone: a fresh session announces them."""
+    if inp.source != "compact" or inp.agent_id or not has_pending(layout):
+        return None
+    config, _ = load_config(layout)
+    record = consume_pending(layout, inp.session_id, inp.cwd, now, config.resume_window_minutes,
+                             same_session_only=True)
+    if record is None:
+        return None
+    return _resume(inp, layout, notifier, config, record, "SessionStart", "session_start")
+
+
+def _resume(inp: HookInput, layout: Layout, notifier: Notifier, config: Config, record: PendingRecord,
+            output_event: str, log_name: str) -> str:
     try:
         with locked_state(layout, inp.session_id) as state:
             state.requested_at_tokens = None
@@ -189,22 +207,23 @@ def _handle_user_prompt_submit(inp: HookInput, layout: Layout, notifier: Notifie
     except (LockTimeout, OSError) as exc:
         # The checkpoint is still readable even if the fresh session's state could not be reset:
         # resume_base tracking for the new segment is lost, but the resume itself must not be.
-        log_event(layout, "user_prompt_submit", "error", session_id=inp.session_id, error=_error_category(exc))
+        log_event(layout, log_name, "error", session_id=inp.session_id, error=_error_category(exc))
     try:
         checkpoint_text = Path(record.checkpoint).read_text(encoding="utf-8")
     except OSError:
-        log_event(layout, "user_prompt_submit", "error", session_id=inp.session_id, error="checkpoint_missing",
+        log_event(layout, log_name, "error", session_id=inp.session_id, error="checkpoint_missing",
                   checkpoint=record.checkpoint)
-        return build_output("UserPromptSubmit", system_message=messages.banner_checkpoint_missing())
-    log_event(layout, "user_prompt_submit", "resume", session_id=inp.session_id, checkpoint=record.checkpoint,
+        return build_output(output_event, system_message=messages.banner_checkpoint_missing())
+    log_event(layout, log_name, "resume", session_id=inp.session_id, checkpoint=record.checkpoint,
               resumed_from=record.context_tokens)
     if config.notify:
         _safe_notify(notifier, messages.notify_resumed(record.context_tokens))
     return build_output(
-        "UserPromptSubmit",
+        output_event,
         system_message=messages.banner_resumed(record.context_tokens),
         additional_context=messages.resume_context(record, checkpoint_text, cli=str(CLI_PATH)),
-        session_title=messages.badge_title(record.title),
+        # Only UserPromptSubmit can set the title; a compacted session keeps its own.
+        session_title=messages.badge_title(record.title) if output_event == "UserPromptSubmit" else None,
     )
 
 
@@ -212,4 +231,5 @@ _HANDLERS = {
     "stop": _handle_stop,
     "post-tool-batch": _handle_post_tool_batch,
     "user-prompt-submit": _handle_user_prompt_submit,
+    "session-start": _handle_session_start,
 }

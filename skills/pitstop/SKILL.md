@@ -1,12 +1,14 @@
 ---
 name: pitstop
-description: Use when the user types /pitstop (on, off, off here, now, status, notify on, notify off, gap) or when a "[pitstop]" hook message asks for a pitstop. Saves a checkpoint, then tells the user to run /clear and resumes from it on the first message after that.
+description: Use when the user types /pitstop (on, off, off here, now, status, notify on, notify off, gap) or when a "[pitstop]" hook message asks for a pitstop. Saves a checkpoint, then restarts from it: after /clear in the terminal, after /compact in T3 Code and other SDK hosts.
 ---
 
 # pitstop
 
 pitstop keeps the context small but complete. Past the threshold it saves a checkpoint at a clean point, then
-tells you to run `/clear`: the first message you send after that resumes from the checkpoint automatically.
+restarts from it. In the terminal it tells you to run `/clear`, and the first message after that resumes from the
+checkpoint. In T3 Code and other SDK hosts, where `/clear` does not exist, it compacts the conversation at the end
+of the turn and the compacted session resumes from the checkpoint.
 
 CLI, always with this interpreter and this path:
 
@@ -63,12 +65,28 @@ A `[pitstop]` hook message gives you: mode, context, cwd, background tasks, and 
    `--plan <plan path>` when a superpowers plan is being executed. If it exits non-zero, print
    `🔋 **pitstop** · fallito: <its reason> → continuo qui` and stop the procedure.
 4. Print the last line of its output (`🔋 **pitstop** · fatto a …`) as a line of its own.
-5. Print, as the last line of your reply, with N replaced by the window from mark-pending's `finestra
-   ripartenza: N minuti` output line:
-   `Scrivi /clear, poi un messaggio qualsiasi (per esempio «riprendi»): riparto dal checkpoint entro N minuti.`
-   Then end your turn. Do not call `mcp__ccd_session_mgmt__clear_session`: the desktop app drops the clear it queues.
+5. Restart, following mark-pending's `ripartenza:` output line. N is the window from its `finestra ripartenza: N
+   minuti` line.
+   - **`ripartenza: clear`** (terminal). Print, as the last line of your reply:
+     `Scrivi /clear, poi un messaggio qualsiasi (per esempio «riprendi»): riparto dal checkpoint entro N minuti.`
+     Then end your turn. Do not call `mcp__ccd_session_mgmt__clear_session`: the desktop app drops the clear it
+     queues.
+   - **`ripartenza: compact`** (T3 Code and other SDK hosts: `/clear` does not work there). If the tools
+     `mcp__t3-code__t3_thread_configuration` and `mcp__t3-code__t3_thread_send` exist (load them with ToolSearch
+     if they are deferred):
+     1. Call `t3_thread_configuration` without `threadId`: it returns this thread's id.
+     2. Call `t3_thread_send` with that `threadId`, `mode: "queue"` and exactly this `message`:
+        `/compact Riassunto di una sola riga: "Riprendi dal checkpoint pitstop."`
+        T3 Code runs it as soon as this turn ends; the compacted session receives the checkpoint by itself.
+     3. Print, as the last line of your reply:
+        `Compatto la conversazione a fine turno: poi scrivi un messaggio qualsiasi (per esempio «riprendi») e riparto dal checkpoint.`
+        Then end your turn.
 
-   The clean session receives the checkpoint by itself: do not paste it anywhere else.
+     If those tools do not exist or a call fails, print instead, as the last line of your reply:
+     `Premi Compact context (o scrivi /compact Riassunto di una sola riga: "Riprendi dal checkpoint pitstop."): riparto dal checkpoint entro N minuti.`
+     Then end your turn.
+
+   The restarted session receives the checkpoint by itself: do not paste it anywhere else.
 
 ## Checkpoint content
 
@@ -103,8 +121,8 @@ summarizes them.
 
 ## Resuming
 
-The first message after `/clear` (any text) arrives with a `[pitstop]` checkpoint; follow the steps in that
-message: re-read only the cited files the next action needs, print `🔋 **pitstop** · ripartito da <K> · Dove eravamo:`
+The first message after `/clear` (any text), or the compacted session after `/compact`, arrives with a
+`[pitstop]` checkpoint; follow the steps in that message: re-read only the cited files the next action needs, print `🔋 **pitstop** · ripartito da <K> · Dove eravamo:`
 with three short lines (goal, state, next action), then continue. If something is missing, run
 `pitstop gap "<what was missing>"` and recover it.
 
