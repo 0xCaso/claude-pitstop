@@ -5,6 +5,9 @@ from typing import Optional
 from pitstop.core.store import PendingRecord
 
 NOTIFY_TITLE = "pitstop"
+# The /compact the skill queues on its own thread in SDK hosts (T3 Code); the PreToolUse guard recognises it.
+COMPACT_SUMMARY = "Riprendi dal checkpoint pitstop."
+COMPACT_COMMAND = '/compact Riassunto di una sola riga: "%s"' % COMPACT_SUMMARY
 BADGE = "🔋"
 
 
@@ -124,3 +127,8 @@ def expired_context(record: PendingRecord) -> str:
         "If the user later asks to resume from it, Read {path} and follow the \"Resuming\" steps of the "
         "pitstop skill.\n"
     ).format(hhmm=hhmm, path=record.checkpoint, line=expired_line(hhmm, record.checkpoint))
+
+
+def compact_blocked_reason() -> str:
+    return ("[pitstop] Blocked: this session has no registered pitstop checkpoint, so pitstop must not compact it. "
+            "If you skipped the pitstop, carry on normally; if mark-pending failed, report it and continue here.")

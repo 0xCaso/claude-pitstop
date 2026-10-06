@@ -19,6 +19,8 @@ class HookInput:
     source: Optional[str] = None
     session_title: Optional[str] = None
     background_tasks: int = 0
+    tool_name: Optional[str] = None
+    tool_input: Optional[Dict[str, Any]] = None
 
 
 def _text(data: Dict[str, Any], key: str) -> Optional[str]:
@@ -47,11 +49,14 @@ def parse_hook_input(raw: str) -> HookInput:
         source=_text(data, "source"),
         session_title=_text(data, "session_title"),
         background_tasks=len(tasks) if isinstance(tasks, list) else 0,
+        tool_name=_text(data, "tool_name"),
+        tool_input=data.get("tool_input") if isinstance(data.get("tool_input"), dict) else None,
     )
 
 
 def build_output(event_name: str, system_message: Optional[str] = None, additional_context: Optional[str] = None,
-                 initial_user_message: Optional[str] = None, session_title: Optional[str] = None) -> str:
+                 initial_user_message: Optional[str] = None, session_title: Optional[str] = None,
+                 deny_reason: Optional[str] = None) -> str:
     output: Dict[str, Any] = {}
     if system_message:
         output["systemMessage"] = system_message
@@ -62,6 +67,9 @@ def build_output(event_name: str, system_message: Optional[str] = None, addition
         specific["initialUserMessage"] = initial_user_message
     if session_title:
         specific["sessionTitle"] = session_title
+    if deny_reason:
+        specific["permissionDecision"] = "deny"
+        specific["permissionDecisionReason"] = deny_reason
     if len(specific) > 1:
         output["hookSpecificOutput"] = specific
     return json.dumps(output, ensure_ascii=True)

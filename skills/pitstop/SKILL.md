@@ -82,7 +82,8 @@ A `[pitstop]` hook message gives you: mode, context, cwd, background tasks, and 
         `Compatto la conversazione a fine turno: poi scrivi un messaggio qualsiasi (per esempio «riprendi») e riparto dal checkpoint.`
         Then end your turn.
 
-     If those tools do not exist or a call fails, print instead, as the last line of your reply:
+     Never queue this `/compact` outside this step: a hook refuses it when the session has no registered
+     checkpoint. If those tools do not exist or a call fails, print instead, as the last line of your reply:
      `Premi Compact context (o scrivi /compact Riassunto di una sola riga: "Riprendi dal checkpoint pitstop."): riparto dal checkpoint entro N minuti.`
      Then end your turn.
 

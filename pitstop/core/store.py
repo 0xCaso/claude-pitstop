@@ -207,3 +207,18 @@ def consume_expired_pending(layout: Layout, session_id: str, cwd: str, now: floa
             continue
         return record
     return None
+
+
+def has_session_pending(layout: Layout, session_id: str, now: float, window_minutes: int) -> bool:
+    """True if this session registered a checkpoint that is still within the resume window. Read-only:
+    nothing is claimed or deleted."""
+    try:
+        paths = _list_records(layout)
+    except FileNotFoundError:
+        return False
+    window = window_minutes * 60
+    for path in paths:
+        record = _read_record(path)
+        if record is not None and record.session_id == session_id and now - record.created_at <= window:
+            return True
+    return False

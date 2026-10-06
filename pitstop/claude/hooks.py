@@ -14,7 +14,13 @@ from pitstop.core.fsutil import LockTimeout
 from pitstop.core.log import log_event
 from pitstop.core.paths import Layout
 from pitstop.core.state import SessionState, locked_state
-from pitstop.core.store import PendingRecord, consume_expired_pending, consume_pending, has_pending
+from pitstop.core.store import (
+    PendingRecord,
+    consume_expired_pending,
+    consume_pending,
+    has_pending,
+    has_session_pending,
+)
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CLI_PATH = REPO_ROOT / "bin" / "pitstop"
@@ -195,6 +201,21 @@ def _handle_session_start(inp: HookInput, layout: Layout, notifier: Notifier, no
     return _resume(inp, layout, notifier, config, record, "SessionStart", "session_start")
 
 
+def _handle_pre_tool_use(inp: HookInput, layout: Layout, notifier: Notifier, now: float) -> Optional[str]:
+    """Deterministic guard for SDK hosts: the /compact pitstop queues on its own thread goes through only
+    if this session has just registered a checkpoint. A skipped pitstop can never compact the session."""
+    message = (inp.tool_input or {}).get("message")
+    if not isinstance(message, str) or not message.lstrip().startswith("/compact"):
+        return None
+    if messages.COMPACT_SUMMARY not in message:
+        return None  # someone else's /compact: not pitstop's business
+    config, _ = load_config(layout)
+    if has_session_pending(layout, inp.session_id, now, config.resume_window_minutes):
+        return None
+    log_event(layout, "pre_tool_use", "compact_blocked", session_id=inp.session_id)
+    return build_output("PreToolUse", deny_reason=messages.compact_blocked_reason())
+
+
 def _resume(inp: HookInput, layout: Layout, notifier: Notifier, config: Config, record: PendingRecord,
             output_event: str, log_name: str) -> str:
     try:
@@ -232,4 +253,5 @@ _HANDLERS = {
     "post-tool-batch": _handle_post_tool_batch,
     "user-prompt-submit": _handle_user_prompt_submit,
     "session-start": _handle_session_start,
+    "pre-tool-use": _handle_pre_tool_use,
 }

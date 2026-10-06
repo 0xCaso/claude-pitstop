@@ -2,6 +2,7 @@ import json
 import time
 from unittest import mock
 
+from pitstop.claude import messages
 from pitstop.claude.hooks import run_hook
 from pitstop.core.config import update_config
 from pitstop.core.fsutil import LockTimeout
@@ -11,7 +12,7 @@ from pitstop.core.store import EXPIRED_NOTICE_HORIZON_SECONDS, PendingRecord, ma
 from tests.helpers import NOW, TempLayoutTestCase, assistant_line, user_line, write_jsonl
 
 EVENT_NAMES = {"stop": "Stop", "post-tool-batch": "PostToolBatch", "user-prompt-submit": "UserPromptSubmit",
-               "session-start": "SessionStart"}
+               "session-start": "SessionStart", "pre-tool-use": "PreToolUse"}
 
 
 class HookTestCase(TempLayoutTestCase):
@@ -387,3 +388,36 @@ class CompactResumeHookTest(PendingMixin, HookTestCase):
     def test_subagent_compaction_is_ignored(self):
         self.pending()
         self.assertIsNone(self.call_hook("session-start", source="compact", agent_id="a1"))
+
+
+class CompactGuardHookTest(PendingMixin, HookTestCase):
+    """PreToolUse on t3_thread_send: pitstop's /compact needs a checkpoint registered by this session."""
+
+    def send(self, message, session_id="s1"):
+        return self.call_hook("pre-tool-use", session_id=session_id, tool_name="mcp__t3-code__t3_thread_send",
+                              tool_input={"threadId": "t1", "message": message, "mode": "queue"})
+
+    def test_pitstop_compact_without_checkpoint_is_denied_and_logged(self):
+        out = self.send(messages.COMPACT_COMMAND)
+        specific = out["hookSpecificOutput"]
+        self.assertEqual((specific["hookEventName"], specific["permissionDecision"]), ("PreToolUse", "deny"))
+        self.assertIn("no registered pitstop checkpoint", specific["permissionDecisionReason"])
+        self.assertEqual([e["action"] for e in read_events(self.layout)], ["compact_blocked"])
+
+    def test_pitstop_compact_after_mark_pending_goes_through_and_claims_nothing(self):
+        self.pending()
+        self.assertIsNone(self.send(messages.COMPACT_COMMAND))
+        self.add_turn(212000)
+        self.assertIsNotNone(self.call_hook("session-start", source="compact"))
+
+    def test_checkpoint_of_another_session_or_expired_does_not_allow_it(self):
+        self.pending(session_id="s0")
+        self.assertIsNotNone(self.send(messages.COMPACT_COMMAND))
+        self.pending(created_at=NOW - 3 * 60 * 60)
+        self.assertIsNotNone(self.send(messages.COMPACT_COMMAND))
+
+    def test_other_messages_are_left_alone(self):
+        for message in ("ciao", "/compact", "/compact tieni solo i test", ""):
+            with self.subTest(message=message):
+                self.assertIsNone(self.send(message))
+        self.assertIsNone(self.call_hook("pre-tool-use", tool_name="mcp__t3-code__t3_thread_send"))

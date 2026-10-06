@@ -9,6 +9,9 @@
     "UserPromptSubmit": [
       {"hooks": [{"type": "command", "command": "/usr/bin/python3 \"${CLAUDE_PLUGIN_ROOT}/bin/pitstop\" hook user-prompt-submit", "timeout": 10}]}
     ],
+    "PreToolUse": [
+      {"matcher": "mcp__t3-code__t3_thread_send", "hooks": [{"type": "command", "command": "/usr/bin/python3 \"${CLAUDE_PLUGIN_ROOT}/bin/pitstop\" hook pre-tool-use", "timeout": 10}]}
+    ],
     "SessionStart": [
       {"matcher": "compact", "hooks": [{"type": "command", "command": "/usr/bin/python3 \"${CLAUDE_PLUGIN_ROOT}/bin/pitstop\" hook session-start", "timeout": 10}]}
     ]
