@@ -1,5 +1,8 @@
+from pathlib import Path
+
 from pitstop.claude.transcript import (
     TranscriptSchemaError,
+    default_projects_dir,
     find_transcript,
     read_context_tokens,
     read_last_cwd,
@@ -91,6 +94,12 @@ class TitleCwdAndLookupTest(TempLayoutTestCase):
         target = write_jsonl(projects / "-work-repo" / "abc-123.jsonl", [user_line()])
         write_jsonl(projects / "-work-repo" / "other.jsonl", [user_line()])
         self.assertEqual(find_transcript("abc-123", projects), target)
+
+    def test_projects_dir_follows_the_account_config_dir(self):
+        self.assertEqual(default_projects_dir({"CLAUDE_CONFIG_DIR": "/Users/u/.claude-work"}),
+                         Path("/Users/u/.claude-work/projects"))
+        self.assertEqual(default_projects_dir({}), Path.home() / ".claude" / "projects")
+        self.assertEqual(default_projects_dir({"CLAUDE_CONFIG_DIR": ""}), Path.home() / ".claude" / "projects")
 
     def test_find_transcript_rejects_unsafe_or_unknown_ids(self):
         projects = self.tmp / "projects"

@@ -2,7 +2,7 @@
 import json
 import os
 from pathlib import Path
-from typing import Any, Dict, Iterator, Optional
+from typing import Any, Dict, Iterator, Mapping, Optional
 
 from pitstop.core.state import is_safe_session_id
 
@@ -107,8 +107,10 @@ def read_last_cwd(transcript_path: str, max_bytes: int = MAX_SCAN_BYTES) -> Opti
     return None
 
 
-def default_projects_dir() -> Path:
-    return Path.home() / ".claude" / "projects"
+def default_projects_dir(env: Optional[Mapping[str, str]] = None) -> Path:
+    """Where Claude Code keeps transcripts: $CLAUDE_CONFIG_DIR/projects (set per account), else ~/.claude/projects."""
+    config_dir = (os.environ if env is None else env).get("CLAUDE_CONFIG_DIR")
+    return (Path(config_dir).expanduser() if config_dir else Path.home() / ".claude") / "projects"
 
 
 def find_transcript(session_id: str, projects_dir: Path) -> Optional[Path]:

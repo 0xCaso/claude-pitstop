@@ -247,8 +247,9 @@ def main(argv: List[str], stdin: TextIO = sys.stdin, stdout: TextIO = sys.stdout
     if argv[:1] == ["hook"]:
         return _hook(argv[1:], stdin, stdout, layout)
     args = build_parser().parse_args(argv)
-    ctx = Ctx(layout, stdin, stdout, os.environ if env is None else env,
-              projects_dir or default_projects_dir(), time.time() if now is None else now)
+    env = os.environ if env is None else env
+    ctx = Ctx(layout, stdin, stdout, env, projects_dir or default_projects_dir(env),
+              time.time() if now is None else now)
     try:
         _COMMANDS[args.command](args, ctx)
     except (CliError, ConfigError) as exc:
