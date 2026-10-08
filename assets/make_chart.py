@@ -1,4 +1,7 @@
-"""Generates the README chart: /usr/bin/python3 assets/make_chart.py assets"""
+"""Generates the README chart: /usr/bin/python3 assets/make_chart.py assets
+
+Layout follows frame "E · Number inside chart" in design/claude-pitstop.pen.
+"""
 import sys
 from pathlib import Path
 
@@ -17,71 +20,68 @@ def session(pitstop):
 
 without, with_ = session(False), session(True)
 saving = 1 - sum(with_) / sum(without)
+peaks = [i for i in range(TURNS - 1) if with_[i + 1] < with_[i]]
 
-W, H = 880, 470
-X0, X1, Y0, Y1 = 76, 724, 380, 130   # plot box: Y0 bottom, Y1 top
-YMAX = 600_000
+W, H = 880, 400
+X0, X1, Y0, Y1 = 40, 712, 352, 40   # plot box: Y0 bottom, Y1 top
+YMAX = 620_000
 def x(t): return X0 + (X1 - X0) * t / (TURNS - 1)
 def y(v): return Y0 - (Y0 - Y1) * v / YMAX
 
-def path(xs):
-    return " ".join("%s%.1f,%.1f" % ("M" if i == 0 else "L", x(i), y(v)) for i, v in enumerate(xs))
+def points(xs, idx=None):
+    idx = range(len(xs)) if idx is None else idx
+    return ["%.1f,%.1f" % (x(i), y(xs[i])) for i in idx]
 
-def area(xs):
-    return path(xs) + " L%.1f,%.1f L%.1f,%.1fZ" % (x(len(xs) - 1), Y0, x(0), Y0)
+def line(xs):
+    return "M" + " L".join(points(xs))
+
+def under(xs):
+    return line(xs) + " L%d,%d L%d,%dZ" % (X1, Y0, X0, Y0)
+
+def between(top, bottom):
+    return line(top) + " L" + " L".join(points(bottom, reversed(range(TURNS)))) + "Z"
 
 THEMES = {
     "light": dict(surface="#fcfcfb", border="#e4e3df", ink="#0b0b0b", ink2="#52514e", muted="#8a8984",
-                  grid="#ecebe7", a="#2a78d6", b="#eb6834", fill=0.10),
+                  a="#2a78d6", b="#eb6834", fa=0.25, fb=0.20),
     "dark": dict(surface="#1a1a19", border="#2e2e2c", ink="#ffffff", ink2="#c3c2b7", muted="#8f8e86",
-                 grid="#2a2a28", a="#3987e5", b="#d95926", fill=0.16),
+                 a="#3987e5", b="#d95926", fa=0.30, fb=0.20),
 }
 
+def gradient(gid, color, top, offset):
+    return ('<linearGradient id="%s" gradientUnits="userSpaceOnUse" x1="0" y1="%d" x2="0" y2="%d">'
+            '<stop offset="%s" stop-color="%s" stop-opacity="%s"/>'
+            '<stop offset="1" stop-color="%s" stop-opacity="0.02"/></linearGradient>'
+            % (gid, Y1, Y0, offset, color, top, color))
+
 def svg(t):
-    first_drop = next(i for i in range(1, TURNS) if with_[i] < with_[i - 1])
-    g = []
-    for v in (0, 200_000, 400_000, 600_000):
-        g.append('<line x1="%d" x2="%d" y1="%.1f" y2="%.1f" stroke="%s"/>' % (X0, X1, y(v), y(v), t["grid"]))
-        g.append('<text x="%d" y="%.1f" text-anchor="end" class="tick">%s</text>' % (X0 - 10, y(v) + 4, "%dK" % (v // 1000) if v else "0"))
-    for n in (0, 25, 50, 75, 100, 125):
-        g.append('<text x="%.1f" y="%d" text-anchor="middle" class="tick">%d</text>' % (x(n), Y0 + 20, n))
-    g.append('<text x="%d" y="%d" class="tick">turns</text>' % (X1 + 10, Y0 + 20))
+    p0 = peaks[0]
+    dots = "".join('<circle cx="%.1f" cy="%.1f" r="9" fill="%s"/><circle cx="%.1f" cy="%.1f" r="6" fill="%s"/>'
+                   % (x(i), y(with_[i]), t["surface"], x(i), y(with_[i]), t["a"]) for i in peaks)
     return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-labelledby="t d">
-<title id="t">Every turn re-reads the whole context</title>
-<desc id="d">Illustrative session of {TURNS} turns growing by 4K tokens per turn. Without pitstop the context climbs to about 600K. With pitstop it drops back to 70K every time it passes 226K, so about {saving:.0%} fewer tokens are re-read over the session.</desc>
+<title id="t">pitstop: {saving:.0%} fewer tokens re-read</title>
+<desc id="d">Context size per turn in an illustrative session of {TURNS} turns growing by 4K tokens a turn. Without pitstop it climbs to 600K. With pitstop it drops back to {RESUME // 1000}K each time it passes {FIRE // 1000}K, so about {saving:.0%} fewer tokens are re-read over the session.</desc>
+<defs>{gradient("ga", t["a"], t["fa"], 0.55)}{gradient("gb", t["b"], t["fb"], 0)}</defs>
 <style>
-text {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: {t["ink2"]}; }}
-.title {{ font-size: 20px; font-weight: 650; fill: {t["ink"]}; }}
-.sub {{ font-size: 13px; }}
-.tick {{ font-size: 12px; fill: {t["muted"]}; font-variant-numeric: tabular-nums; }}
-.label {{ font-size: 13px; font-weight: 600; fill: {t["ink"]}; }}
-.note {{ font-size: 12px; }}
-.hero {{ font-size: 34px; font-weight: 700; fill: {t["ink"]}; font-variant-numeric: tabular-nums; }}
+text {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: {t["ink2"]}; font-weight: 500; }}
+.hero {{ font-size: 96px; font-weight: 700; letter-spacing: -2px; fill: {t["ink"]}; font-variant-numeric: tabular-nums; }}
+.caption {{ font-size: 22px; }}
+.label {{ font-size: 17px; font-weight: 600; fill: {t["ink"]}; }}
+.tick {{ font-size: 15px; fill: {t["muted"]}; font-variant-numeric: tabular-nums; }}
 </style>
-<rect x="0.5" y="0.5" width="{W-1}" height="{H-1}" rx="12" fill="{t["surface"]}" stroke="{t["border"]}"/>
-<text x="32" y="44" class="title">Every turn re-reads the whole context</text>
-<text x="32" y="68" class="sub">Context size per turn in an illustrative session that grows by 4K tokens a turn</text>
-<text x="{W-32}" y="50" text-anchor="end" class="hero">−{saving:.0%}</text>
-<text x="{W-32}" y="70" text-anchor="end" class="sub">tokens re-read over {TURNS} turns</text>
-<g transform="translate(32,96)">
-  <rect x="0" y="-9" width="14" height="4" rx="2" fill="{t["b"]}"/><text x="22" y="-3" class="sub">Without pitstop</text>
-  <rect x="140" y="-9" width="14" height="4" rx="2" fill="{t["a"]}"/><text x="162" y="-3" class="sub">With pitstop</text>
-</g>
-{"".join(g)}
-<path d="{area(without)}" fill="{t["b"]}" fill-opacity="{t["fill"]}"/>
-<path d="{area(with_)}" fill="{t["a"]}" fill-opacity="{t["fill"]}"/>
-<line x1="{X0}" x2="{X1}" y1="{y(200_000):.1f}" y2="{y(200_000):.1f}" stroke="{t["muted"]}" stroke-width="1" stroke-dasharray="4 4"/>
-<text x="{X0+8}" y="{y(200_000)-8:.1f}" class="note">threshold 200K</text>
-<path d="{path(without)}" fill="none" stroke="{t["b"]}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<path d="{path(with_)}" fill="none" stroke="{t["a"]}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<line x1="{X0}" x2="{X1}" y1="{Y0}" y2="{Y0}" stroke="{t["border"]}"/>
-<text x="{X1+10}" y="{y(without[-1])-2:.1f}" class="label">Without pitstop</text>
-<text x="{X1+10}" y="{y(without[-1])+15:.1f}" class="note">{without[-1]//1000}K</text>
-<text x="{X1+10}" y="{y(with_[-1])-2:.1f}" class="label">With pitstop</text>
-<text x="{X1+10}" y="{y(with_[-1])+15:.1f}" class="note">{with_[-1]//1000}K</text>
-<text x="{x(first_drop)+8:.1f}" y="{y(RESUME)+18:.1f}" class="note">pitstop at {FIRE//1000}K → resume at {RESUME//1000}K</text>
-<text x="32" y="{H-38}" class="note">Trigger and resume sizes are the medians of 142 real pitstops (author's log, Sep–Oct 2026).</text>
-<text x="32" y="{H-20}" class="note">Re-read tokens are the area under each line; the checkpoint and the files read after a resume are not counted.</text>
+<rect x="0.5" y="0.5" width="{W-1}" height="{H-1}" rx="16" fill="{t["surface"]}" stroke="{t["border"]}"/>
+<line x1="{X0}" x2="{X1}" y1="{Y0}" y2="{Y0}" stroke="{t["border"]}" stroke-width="1.5"/>
+<path d="{between(without, with_)}" fill="url(#gb)"/>
+<path d="{under(with_)}" fill="url(#ga)"/>
+<path d="{line(without)}" fill="none" stroke="{t["b"]}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="{line(with_)}" fill="none" stroke="{t["a"]}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+{dots}
+<text x="{x(p0)-6:.1f}" y="{y(with_[p0])-12:.1f}" text-anchor="end" class="tick">{FIRE // 1000}K</text>
+<text x="{x(p0+1)+10:.1f}" y="{y(RESUME)+16:.1f}" class="tick">{RESUME // 1000}K</text>
+<text x="{X1+14}" y="{y(without[-1])+6:.1f}" class="label">without pitstop</text>
+<text x="{X1+14}" y="{y(with_[-1])+6:.1f}" class="label">with pitstop</text>
+<text x="52" y="141" class="hero">−{saving:.0%}</text>
+<text x="60" y="180" class="caption">tokens re-read</text>
 </svg>
 '''
 

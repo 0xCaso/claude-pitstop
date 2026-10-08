@@ -18,8 +18,10 @@ pitstop waits until the context passes a threshold (200K tokens by default), the
 checkpoint at the next clean point: the goal, the current state, the next action, the decisions and preferences,
 and the files to re-read. The session restarts from that checkpoint instead of carrying everything along.
 
-The chart above is an illustration, not a benchmark. Its trigger and resume sizes are the medians of 142 real
-pitstops from the author's own log; the saving in your sessions depends on how they grow.
+The chart above is an illustration, not a benchmark: a 146-turn session that grows by 4K tokens a turn. Its
+trigger and resume sizes are the medians of 142 real pitstops from the author's own log (Sep–Oct 2026). The −57%
+compares the tokens re-read over the session, the area under each line; it leaves out the checkpoint and the
+files re-read after each resume. The saving in your sessions depends on how they grow.
 
 ## What a pitstop looks like
 
