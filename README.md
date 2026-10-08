@@ -5,7 +5,7 @@ A local Claude Code plugin that keeps long sessions cheap without losing the thr
 When the main conversation grows past 200K tokens, pitstop asks Claude to save a compact checkpoint at the next
 clean point and tells you to run `/clear`. The first message you send after that resumes from the checkpoint
 automatically. In T3 Code, where `/clear` does not exist, Claude queues a `/compact` on its own thread instead,
-and the compacted conversation resumes from the checkpoint.
+followed by a queued «Riprendi dal checkpoint pitstop.», so the compacted conversation resumes on its own.
 
 ## Why
 
@@ -46,7 +46,8 @@ Emergency switch: `claude plugin disable pitstop@skills-dir`.
   once per segment, for a pitstop at the next clean point.
 - The `pitstop` skill writes the checkpoint, registers it and tells the user to run `/clear`. In SDK hosts such as
   T3 Code (`CLAUDE_CODE_ENTRYPOINT=sdk-*`) it queues `/compact` on its own thread with T3 Code's
-  `t3_thread_send` tool instead, asking for a one-line summary; without that tool it asks you to press
+  `t3_thread_send` tool instead, asking for a one-line summary, then queues «Riprendi dal checkpoint pitstop.»
+  behind it so the first turn after the compaction starts without you; without that tool it asks you to press
   "Compact context".
 - After `/clear`, a `UserPromptSubmit` hook injects the checkpoint once into the first message of the fresh
   session, when it is in the same project (even if the working directory changed mid-session, e.g. via `cd`)

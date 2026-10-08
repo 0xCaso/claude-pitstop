@@ -8,7 +8,7 @@ description: Use when the user types /pitstop (on, off, off here, now, status, n
 pitstop keeps the context small but complete. Past the threshold it saves a checkpoint at a clean point, then
 restarts from it. In the terminal it tells you to run `/clear`, and the first message after that resumes from the
 checkpoint. In T3 Code and other SDK hosts, where `/clear` does not exist, it compacts the conversation at the end
-of the turn and the compacted session resumes from the checkpoint.
+of the turn and queues a «riprendi» right after it, so the compacted session resumes from the checkpoint by itself.
 
 CLI, always with this interpreter and this path:
 
@@ -78,7 +78,13 @@ A `[pitstop]` hook message gives you: mode, context, cwd, background tasks, and 
      2. Call `t3_thread_send` with that `threadId`, `mode: "queue"` and exactly this `message`:
         `/compact Riassunto di una sola riga: "Riprendi dal checkpoint pitstop."`
         T3 Code runs it as soon as this turn ends; the compacted session receives the checkpoint by itself.
-     3. Print, as the last line of your reply:
+     3. Only if step 2 succeeded, call `t3_thread_send` again with the same `threadId`, `mode: "queue"` and
+        exactly this `message`: `Riprendi dal checkpoint pitstop.`
+        T3 Code delivers queued messages in order, so this one starts the first turn after the compaction and
+        the session resumes without the user typing anything.
+     4. Print, as the last line of your reply:
+        `Compatto la conversazione a fine turno e riparto da solo dal checkpoint.`
+        If step 3 failed, print instead:
         `Compatto la conversazione a fine turno: poi scrivi un messaggio qualsiasi (per esempio «riprendi») e riparto dal checkpoint.`
         Then end your turn.
 
