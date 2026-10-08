@@ -19,10 +19,10 @@ RECORD = PendingRecord(checkpoint="/cp/20260913-101010-s1.md", session_id="s1", 
 
 class MessagesTest(unittest.TestCase):
     def test_fixed_formats(self):
-        self.assertEqual(banner_triggered(212345), "🔋 pitstop · 212K → ai box al prossimo punto pulito")
-        self.assertEqual(banner_resumed(212999), "🔋 pitstop · ripartito da 212K")
-        self.assertEqual(done_line(212000), "🔋 **pitstop** · fatto a 212K → rientro in pista pulito")
-        self.assertEqual(resumed_line(212000), "🔋 **pitstop** · ripartito da 212K · Dove eravamo:")
+        self.assertEqual(banner_triggered(212345), "🔋 pitstop · 212K → pitting at the next clean point")
+        self.assertEqual(banner_resumed(212999), "🔋 pitstop · resumed from 212K")
+        self.assertEqual(done_line(212000), "🔋 **pitstop** · done at 212K → back on track with a clean context")
+        self.assertEqual(resumed_line(212000), "🔋 **pitstop** · resumed from 212K · Where we were:")
 
     def test_badge_title_has_no_double_prefix(self):
         self.assertEqual(badge_title("Piano pitstop"), "🔋 Piano pitstop")
@@ -59,5 +59,5 @@ class MessagesTest(unittest.TestCase):
         text = resume_context(RECORD, "# Checkpoint\nobiettivo {non un placeholder}", cli="/repo/bin/pitstop")
         self.assertIn("# Checkpoint\nobiettivo {non un placeholder}", text)
         self.assertIn(RECORD.checkpoint, text)
-        self.assertIn("🔋 **pitstop** · ripartito da 212K · Dove eravamo:", text)
+        self.assertIn("🔋 **pitstop** · resumed from 212K · Where we were:", text)
         self.assertIn('/usr/bin/python3 /repo/bin/pitstop gap "', text)

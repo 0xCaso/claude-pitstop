@@ -1,69 +1,88 @@
 # pitstop
 
-A local Claude Code plugin that keeps long sessions cheap without losing the thread.
+A Claude Code plugin that restarts long sessions from a small checkpoint, so each turn stops re-reading a huge
+context.
 
-When the main conversation grows past 200K tokens, pitstop asks Claude to save a compact checkpoint at the next
-clean point and tells you to run `/clear`. The first message you send after that resumes from the checkpoint
-automatically. In T3 Code, where `/clear` does not exist, Claude queues a `/compact` on its own thread instead,
-followed by a queued «Riprendi dal checkpoint pitstop.», so the compacted conversation resumes on its own.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/context-dark.svg">
+  <img alt="Context size per turn in an illustrative session. Without pitstop it climbs to 600K tokens; with pitstop it drops back to 70K each time it passes 226K, for about 57% fewer tokens re-read." src="assets/context-light.svg">
+</picture>
 
 ## Why
 
-Most of the cost of a long session is re-reading a large cached context on every turn. Restarting from a small
-checkpoint that points to files, instead of summarizing them, cuts that cost. Quality comes first: pitstop skips
-when a checkpoint would lose something that lives only in the context, such as a debugging session half-way.
+Every turn re-reads the whole conversation. Prompt caching makes those reads cheaper, but they are still billed
+per token, so a session at 400K tokens pays for 400K tokens on every turn, even when most of it is no longer
+needed.
+
+pitstop waits until the context passes a threshold (200K tokens by default), then has Claude write a short
+checkpoint at the next clean point: the goal, the current state, the next action, the decisions and preferences,
+and the files to re-read. The session restarts from that checkpoint instead of carrying everything along.
+
+The chart above is an illustration, not a benchmark. Its trigger and resume sizes are the medians of 142 real
+pitstops from the author's own log; the saving in your sessions depends on how they grow.
+
+## What a pitstop looks like
+
+1. The context passes the threshold. pitstop asks Claude to stop at the next clean point.
+2. Claude writes the checkpoint and prints `🔋 pitstop · done at 226K → back on track with a clean context`.
+3. The session restarts:
+   - **Terminal:** you run `/clear` and send any message. The checkpoint is injected into it.
+   - **T3 Code and other SDK hosts** (no `/clear` there): Claude queues `/compact` on its own thread, followed by
+     `Resume from the pitstop checkpoint.`, so the compacted session picks up by itself.
+4. Claude re-reads only the files the next action needs and prints three lines: goal, state, next action.
+
+Claude skips a pitstop when the checkpoint would lose something that lives only in the context: a debugging session
+half-way, fine edits on a long text, subagents still running, work that ends in a few exchanges. When in doubt,
+it skips.
+
+## Limits
+
+- **A checkpoint can miss things.** Claude writes it, and it points to files instead of copying them. If the
+  resumed session lacks something, `/pitstop gap <what was missing>` records it so you can see how often it
+  happens.
+- **macOS only, so far.** The hooks run `/usr/bin/python3` (3.9+, standard library only) and notifications use
+  `osascript`. Linux may work but is untested; Windows is not supported.
+- **Built on recent Claude Code.** Checked with 2.1.294. The author's log since September 2026 has 76 resumes after
+  `/clear` in the terminal and 35 after `/compact` in T3 Code.
 
 ## Install
 
-Requires macOS and `/usr/bin/python3` (3.9+, standard library only).
+From GitHub, as a plugin marketplace:
 
 ```bash
-mkdir -p ~/.claude/skills && ln -sfn "$PWD" ~/.claude/skills/pitstop
-claude plugin validate --strict ~/.claude/skills/pitstop
-claude plugin details pitstop
+claude plugin marketplace add 0xCaso/claude-pitstop
+claude plugin install pitstop@claude-pitstop
 ```
 
-The plugin loads in the next session as `pitstop@skills-dir`. It does not touch `settings.json`.
+Or from a clone, for development (Claude Code loads it as `pitstop@skills-dir`):
+
+```bash
+git clone https://github.com/0xCaso/claude-pitstop.git
+cd claude-pitstop
+mkdir -p ~/.claude/skills && ln -sfn "$PWD" ~/.claude/skills/pitstop
+```
+
+Start a new session afterwards. pitstop does not edit your `settings.json`.
 
 ## Commands
 
 | Command | Effect |
 |---|---|
-| `/pitstop status` | On/off, notifications, current context, threshold, pitstops, real resume size, gaps |
-| `/pitstop on` · `/pitstop off` | Enable or disable in all sessions |
-| `/pitstop off here` | Disable in the current session |
-| `/pitstop now` | Checkpoint and resume right away |
+| `/pitstop status` | On or off, notifications, current context, threshold, pitstops so far, real resume size, gaps |
+| `/pitstop on` · `/pitstop off` | Turn pitstop on or off in every session |
+| `/pitstop off here` | Turn it off in the current session only |
+| `/pitstop now` | Checkpoint and restart right away |
 | `/pitstop notify on` · `off` | macOS notifications |
-| `/pitstop gap <what was missing>` | Record something the checkpoint was missing |
+| `/pitstop gap <what was missing>` | Record something a checkpoint missed |
 
-The `/` menu shows the skill namespaced as `/pitstop:pitstop`.
+The `/` menu lists the skill as `/pitstop:pitstop`.
 
-Emergency switch: `claude plugin disable pitstop@skills-dir`.
-
-## How it works
-
-- `Stop` and `PostToolBatch` hooks read the context size from the transcript. Past the threshold they ask Claude,
-  once per segment, for a pitstop at the next clean point.
-- The `pitstop` skill writes the checkpoint, registers it and tells the user to run `/clear`. In SDK hosts such as
-  T3 Code (`CLAUDE_CODE_ENTRYPOINT=sdk-*`) it queues `/compact` on its own thread with T3 Code's
-  `t3_thread_send` tool instead, asking for a one-line summary, then queues «Riprendi dal checkpoint pitstop.»
-  behind it so the first turn after the compaction starts without you; without that tool it asks you to press
-  "Compact context".
-- After `/clear`, a `UserPromptSubmit` hook injects the checkpoint once into the first message of the fresh
-  session, when it is in the same project (even if the working directory changed mid-session, e.g. via `cd`)
-  and starts within the configured resume window (default 60 minutes).
-- After `/compact`, a `SessionStart` hook (matcher `compact`) injects the session's own checkpoint once, within
-  the same window. It never takes another session's checkpoint.
-- A matching checkpoint found past that window, but still under 24 hours old, is not resumed automatically
-  but gets a one-line "checkpoint scaduto" notice instead of silence, with the path to resume from it.
-- Every hook fails open: any error leaves the conversation untouched.
-
-Working files live in `~/.claude/pitstop/`: `config.json`, `state/`, `pending/`, `checkpoints/`, `log.jsonl` and
-`gaps.jsonl`. The log holds numbers and states only.
+To turn the whole plugin off at once: `claude plugin disable pitstop@claude-pitstop` (or `pitstop@skills-dir` for
+a clone).
 
 ## Configuration
 
-`~/.claude/pitstop/config.json` (missing file = defaults):
+`~/.claude/pitstop/config.json`. A missing file means these defaults:
 
 ```json
 {
@@ -75,16 +94,54 @@ Working files live in `~/.claude/pitstop/`: `config.json`, `state/`, `pending/`,
 }
 ```
 
+| Key | Meaning |
+|---|---|
+| `threshold_tokens` | Context size that triggers a pitstop (50,000–900,000) |
+| `retrigger_step_tokens` | After a skipped pitstop, how many more tokens before asking again |
+| `resume_window_minutes` | How long a checkpoint stays valid for an automatic resume (1–60) |
+
+An invalid file turns pitstop off and says why once, until the file changes.
+
+## How it works
+
+- `Stop` and `PostToolBatch` hooks read the context size from the session transcript. Past the threshold they ask
+  Claude for a pitstop, once per segment.
+- The `pitstop` skill writes the checkpoint, registers it with the `bin/pitstop` CLI and restarts the session.
+- After `/clear`, a `UserPromptSubmit` hook injects the checkpoint into the first message of the new session, once,
+  if it is in the same project and within the resume window.
+- After `/compact`, a `SessionStart` hook injects the session's own checkpoint, once. It never takes another
+  session's checkpoint.
+- A `PreToolUse` hook blocks pitstop's `/compact` in T3 Code unless the session has just registered a checkpoint,
+  so a skipped pitstop can never compact the conversation.
+- A matching checkpoint past the resume window but under 24 hours old is not injected; the new session gets a
+  one-line notice with its path instead.
+- Every hook fails open: on any error the conversation goes on untouched.
+
+## Data
+
+Everything stays on your machine, in `~/.claude/pitstop/` (override with `PITSTOP_HOME`): `config.json`,
+`checkpoints/`, `pending/`, `state/`, `log.jsonl` and `gaps.jsonl`. The log holds token counts and states, not
+conversation text. Checkpoints do contain a summary of your session, written without secrets or personal data by
+instruction.
+
 ## Development
 
 ```bash
 /usr/bin/python3 -m unittest discover -s tests -t . -v
+claude plugin validate --strict .
+/usr/bin/python3 assets/make_chart.py assets   # regenerate the chart
 ```
 
 ## Uninstall
 
 ```bash
-rm ~/.claude/skills/pitstop
+claude plugin uninstall pitstop@claude-pitstop
+claude plugin marketplace remove claude-pitstop
 ```
 
-Delete `~/.claude/pitstop/` too if you do not need the checkpoints and the log.
+For a clone: `rm ~/.claude/skills/pitstop`. Delete `~/.claude/pitstop/` too if you do not need the checkpoints or
+the log.
+
+## License
+
+[MIT](LICENSE)

@@ -51,13 +51,13 @@ class StopHookTest(HookTestCase):
     def test_over_threshold_requests_once_per_step(self):
         self.add_turn(212345)
         out = self.call_hook("stop")
-        self.assertEqual(out["systemMessage"], "🔋 pitstop · 212K → ai box al prossimo punto pulito")
+        self.assertEqual(out["systemMessage"], "🔋 pitstop · 212K → pitting at the next clean point")
         self.assertEqual(out["hookSpecificOutput"]["hookEventName"], "Stop")
         context = out["hookSpecificOutput"]["additionalContext"]
         self.assertIn("mode: conversation", context)
         self.assertIn("cwd: /work/repo", context)
         self.assertIn("/bin/pitstop", context)
-        self.assertEqual(self.notes, [("pitstop", "Ai box a 212K: checkpoint al prossimo punto pulito")])
+        self.assertEqual(self.notes, [("pitstop", "Pitting at 212K: checkpoint at the next clean point")])
         self.assertIsNone(self.call_hook("stop"))
         self.add_turn(262345)
         self.assertIsNotNone(self.call_hook("stop"))
@@ -94,7 +94,7 @@ class StopHookTest(HookTestCase):
         self.add_turn(300000)
         out = self.call_hook("stop")
         self.assertEqual(set(out), {"systemMessage"})
-        self.assertIn("config.json non valido", out["systemMessage"])
+        self.assertIn("invalid config.json", out["systemMessage"])
         self.assertIsNone(self.call_hook("stop"))
 
 
@@ -132,12 +132,12 @@ class ResumeHookTest(PendingMixin, HookTestCase):
         fresh = write_jsonl(self.tmp / "s2.jsonl", [user_line()])
         out = self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(fresh))
         specific = out["hookSpecificOutput"]
-        self.assertEqual(out["systemMessage"], "🔋 pitstop · ripartito da 212K")
+        self.assertEqual(out["systemMessage"], "🔋 pitstop · resumed from 212K")
         self.assertIn("prossima azione: X", specific["additionalContext"])
         self.assertEqual(specific["hookEventName"], "UserPromptSubmit")
         self.assertNotIn("initialUserMessage", specific)
         self.assertEqual(specific["sessionTitle"], "🔋 Titolo")
-        self.assertEqual(self.notes, [("pitstop", "Ripartito da 212K")])
+        self.assertEqual(self.notes, [("pitstop", "Resumed from 212K")])
         self.assertIsNone(self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(fresh)))
         self.assertEqual([e["action"] for e in read_events(self.layout)], ["resume"])
 
@@ -149,10 +149,10 @@ class ResumeHookTest(PendingMixin, HookTestCase):
         )
 
     def test_badged_title_is_not_badged_twice(self):
-        self.pending(title="🔋 Già marcata")
+        self.pending(title="🔋 Already badged")
         fresh = write_jsonl(self.tmp / "s2.jsonl", [user_line()])
         out = self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(fresh))
-        self.assertEqual(out["hookSpecificOutput"]["sessionTitle"], "🔋 Già marcata")
+        self.assertEqual(out["hookSpecificOutput"]["sessionTitle"], "🔋 Already badged")
 
     def test_plan_is_named_in_context_and_missing_transcript_counts_as_fresh(self):
         self.pending(plan="docs/superpowers/plans/p.md")
@@ -185,7 +185,7 @@ class ResumeHookTest(PendingMixin, HookTestCase):
         self.pending(checkpoint=str(self.tmp / "gone.md"))
         fresh = write_jsonl(self.tmp / "s2.jsonl", [user_line()])
         out = self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(fresh))
-        self.assertEqual(out, {"systemMessage": "🔋 pitstop · checkpoint non trovato, riparto senza"})
+        self.assertEqual(out, {"systemMessage": "🔋 pitstop · checkpoint not found, starting without it"})
         self.assertEqual(self.errors(), ["checkpoint_missing"])
 
     def test_resume_starts_a_new_segment_and_logs_resume_base(self):
@@ -230,7 +230,7 @@ class ResumeHookTest(PendingMixin, HookTestCase):
         fresh = write_jsonl(self.tmp / "s2.jsonl", [user_line()])
         with mock.patch("pitstop.claude.hooks.locked_state", side_effect=LockTimeout("boom")):
             out = self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(fresh))
-        self.assertEqual(out["systemMessage"], "🔋 pitstop · ripartito da 212K")
+        self.assertEqual(out["systemMessage"], "🔋 pitstop · resumed from 212K")
         self.assertEqual(self.errors(), ["lock_timeout"])
 
     def test_no_pending_records_skips_the_transcript_read(self):
@@ -242,7 +242,7 @@ class ResumeHookTest(PendingMixin, HookTestCase):
 
 class ExpiredNoticeHookTest(HookTestCase):
     """A record past the resume window but still inside the 24h notice horizon: instead of silence,
-    the fresh session gets a one-line "checkpoint scaduto" notice and can ask to resume from it."""
+    the fresh session gets a one-line "checkpoint expired" notice and can ask to resume from it."""
 
     def pending(self, **overrides):
         checkpoint = self.tmp / "cp.md"
@@ -257,15 +257,15 @@ class ExpiredNoticeHookTest(HookTestCase):
         checkpoint = self.pending()
         fresh = write_jsonl(self.tmp / "s2.jsonl", [user_line()])
         out = self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(fresh))
-        self.assertEqual(out["systemMessage"], "🔋 pitstop · checkpoint scaduto, riparto senza")
+        self.assertEqual(out["systemMessage"], "🔋 pitstop · checkpoint expired, starting without it")
         specific = out["hookSpecificOutput"]
         self.assertEqual(specific["hookEventName"], "UserPromptSubmit")
         self.assertNotIn("sessionTitle", specific)
         self.assertNotIn("initialUserMessage", specific)
         context = specific["additionalContext"]
         self.assertIn(checkpoint, context)
-        self.assertIn("riprendi dal checkpoint", context)
-        self.assertIn("«riprendi dal checkpoint»", context)
+        self.assertIn("resume from the checkpoint", context)
+        self.assertIn("“resume from the checkpoint”", context)
         # HH:MM of created_at (NOW - 3700), local time
         hhmm = time.strftime("%H:%M", time.localtime(NOW - 3700))
         self.assertIn(hhmm, context)
@@ -303,7 +303,7 @@ class ExpiredNoticeHookTest(HookTestCase):
                                                  context_tokens=180000, created_at=NOW - 60, title=None, plan=None))
         fresh = write_jsonl(self.tmp / "s2.jsonl", [user_line()])
         out = self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(fresh))
-        self.assertEqual(out["systemMessage"], "🔋 pitstop · ripartito da 180K")
+        self.assertEqual(out["systemMessage"], "🔋 pitstop · resumed from 180K")
         self.assertIn("prossima azione: Y", out["hookSpecificOutput"]["additionalContext"])
 
     def test_missing_checkpoint_file_drops_the_record_silently(self):
@@ -355,11 +355,11 @@ class CompactResumeHookTest(PendingMixin, HookTestCase):
         self.pending()
         out = self.call_hook("session-start", source="compact")
         specific = out["hookSpecificOutput"]
-        self.assertEqual(out["systemMessage"], "🔋 pitstop · ripartito da 212K")
+        self.assertEqual(out["systemMessage"], "🔋 pitstop · resumed from 212K")
         self.assertEqual(specific["hookEventName"], "SessionStart")
         self.assertIn("prossima azione: X", specific["additionalContext"])
         self.assertNotIn("sessionTitle", specific)
-        self.assertEqual(self.notes, [("pitstop", "Ripartito da 212K")])
+        self.assertEqual(self.notes, [("pitstop", "Resumed from 212K")])
         self.assertIsNone(self.call_hook("session-start", source="compact"))
         self.assertIsNone(self.call_hook("user-prompt-submit"))
         self.assertEqual([e["action"] for e in read_events(self.layout)], ["resume"])

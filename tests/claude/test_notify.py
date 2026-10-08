@@ -6,9 +6,9 @@ from pitstop.claude.notify import notification_command, notify
 
 class NotifyTest(unittest.TestCase):
     def test_text_is_passed_as_arguments_not_as_script(self):
-        cmd = notification_command("pitstop", 'Ai box a 212K "quoted"')
+        cmd = notification_command("pitstop", 'Pitting at 212K "quoted"')
         self.assertEqual(cmd[0], "/usr/bin/osascript")
-        self.assertEqual(cmd[-2:], ['Ai box a 212K "quoted"', "pitstop"])
+        self.assertEqual(cmd[-2:], ['Pitting at 212K "quoted"', "pitstop"])
         self.assertNotIn("212K", " ".join(cmd[:-2]))
 
     def test_spawns_detached(self):

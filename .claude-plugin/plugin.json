@@ -2,6 +2,17 @@
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "pitstop",
   "version": "0.1.0",
-  "description": "Checkpoint past a context threshold and resume after /clear",
-  "author": { "name": "Matteo Casonato" }
+  "description": "Checkpoint past a context threshold and resume after /clear or /compact",
+  "author": {
+    "name": "Matteo Casonato"
+  },
+  "homepage": "https://github.com/0xCaso/claude-pitstop",
+  "repository": "https://github.com/0xCaso/claude-pitstop",
+  "license": "MIT",
+  "keywords": [
+    "context",
+    "checkpoint",
+    "compact",
+    "cost"
+  ]
 }

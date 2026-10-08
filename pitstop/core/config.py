@@ -17,7 +17,7 @@ class Config:
 
 
 class ConfigError(Exception):
-    """config.json cannot be used. The message is shown to the user, in Italian."""
+    """config.json cannot be used. The message is shown to the user."""
 
 
 _BOOL_KEYS = ("enabled", "notify")
@@ -30,22 +30,22 @@ _INT_RANGES = {
 
 def parse_config(raw: Any) -> Config:
     if not isinstance(raw, dict):
-        raise ConfigError("il file deve contenere un oggetto JSON")
+        raise ConfigError("the file must contain a JSON object")
     values: Dict[str, Any] = asdict(Config())
     for key in _BOOL_KEYS:
         if key in raw:
             if not isinstance(raw[key], bool):
-                raise ConfigError("%s deve essere true o false" % key)
+                raise ConfigError("%s must be true or false" % key)
             values[key] = raw[key]
     for key, (low, high) in _INT_RANGES.items():
         if key not in raw:
             continue
         value = raw[key]
         if isinstance(value, bool) or not isinstance(value, int):
-            raise ConfigError("%s deve essere un numero intero" % key)
+            raise ConfigError("%s must be an integer" % key)
         if value < low or (high is not None and value > high):
             limit = "%d–%d" % (low, high) if high is not None else "≥ %d" % low
-            raise ConfigError("%s fuori intervallo (%s)" % (key, limit))
+            raise ConfigError("%s out of range (%s)" % (key, limit))
         values[key] = value
     return Config(**values)
 
@@ -57,11 +57,11 @@ def load_config(layout: Layout) -> Tuple[Config, Optional[str]]:
     except FileNotFoundError:
         return Config(), None
     except OSError as exc:
-        return Config(enabled=False), "config.json illeggibile (%s)" % exc.strerror
+        return Config(enabled=False), "config.json unreadable (%s)" % exc.strerror
     try:
         return parse_config(json.loads(text)), None
     except ValueError:
-        return Config(enabled=False), "config.json non è JSON valido"
+        return Config(enabled=False), "config.json is not valid JSON"
     except ConfigError as exc:
         return Config(enabled=False), str(exc)
 
@@ -73,9 +73,9 @@ def update_config(layout: Layout, **changes: Any) -> Config:
     except FileNotFoundError:
         raw = {}
     except ValueError:
-        raise ConfigError("config.json non è JSON valido: correggilo o cancellalo") from None
+        raise ConfigError("config.json is not valid JSON: fix or delete it") from None
     if not isinstance(raw, dict):
-        raise ConfigError("config.json deve contenere un oggetto JSON: correggilo o cancellalo")
+        raise ConfigError("config.json must contain a JSON object: fix or delete it")
     raw.update(changes)
     config = parse_config(raw)
     atomic_write_text(layout.config, json.dumps(asdict(config), indent=2) + "\n")

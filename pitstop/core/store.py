@@ -188,7 +188,7 @@ def consume_pending(layout: Layout, session_id: str, cwd: str, now: float, windo
 
 def consume_expired_pending(layout: Layout, session_id: str, cwd: str, now: float, window_minutes: int,
                             project_dir: Optional[str] = None) -> Optional[PendingRecord]:
-    """The counterpart to consume_pending for the "checkpoint scaduto" notice: finds the newest record
+    """The counterpart to consume_pending for the "checkpoint expired" notice: finds the newest record
     that matches this session the same way a resume would (same session id, then project folder, then
     cwd) but has expired — past the window, still within the 24h notice horizon — claims it the same
     atomic way, and returns it. A record whose checkpoint file no longer exists is dropped silently

@@ -31,7 +31,7 @@ ENTRYPOINT_ENV = "CLAUDE_CODE_ENTRYPOINT"
 
 
 class CliError(Exception):
-    """Shown to the user as `🔋 pitstop · <message>`, exit code 1. Messages are Italian."""
+    """Shown to the user as `🔋 pitstop · <message>`, exit code 1. Messages are English."""
 
 
 def write_text(stream: TextIO, text: str) -> None:
@@ -66,7 +66,7 @@ class Ctx:
 def _session_id(args: argparse.Namespace, ctx: Ctx) -> str:
     session = getattr(args, "session", None) or ctx.env.get(SESSION_ENV)
     if not session:
-        raise CliError("sessione sconosciuta: manca %s, passa --session" % SESSION_ENV)
+        raise CliError("unknown session: %s is not set, pass --session" % SESSION_ENV)
     return session
 
 
@@ -75,29 +75,29 @@ def _transcript(args: argparse.Namespace, ctx: Ctx, session_id: str) -> Path:
         return Path(args.transcript)
     found = find_transcript(session_id, ctx.projects_dir)
     if found is None:
-        raise CliError("transcript della sessione %s non trovato" % session_id)
+        raise CliError("transcript of session %s not found" % session_id)
     return found
 
 
 def cmd_on(args: argparse.Namespace, ctx: Ctx) -> None:
     update_config(ctx.layout, enabled=True)
-    ctx.say("🔋 pitstop acceso")
+    ctx.say("🔋 pitstop on")
 
 
 def cmd_off(args: argparse.Namespace, ctx: Ctx) -> None:
     update_config(ctx.layout, enabled=False)
-    ctx.say("🔋 pitstop spento in tutte le sessioni")
+    ctx.say("🔋 pitstop off in all sessions")
 
 
 def cmd_off_here(args: argparse.Namespace, ctx: Ctx) -> None:
     with locked_state(ctx.layout, _session_id(args, ctx)) as state:
         state.excluded = True
-    ctx.say("🔋 pitstop spento in questa sessione")
+    ctx.say("🔋 pitstop off in this session")
 
 
 def cmd_notify(args: argparse.Namespace, ctx: Ctx) -> None:
     update_config(ctx.layout, notify=args.state == "on")
-    ctx.say("🔋 notifiche pitstop %s" % ("accese" if args.state == "on" else "spente"))
+    ctx.say("🔋 pitstop notifications %s" % args.state)
 
 
 def cmd_new_checkpoint(args: argparse.Namespace, ctx: Ctx) -> None:
@@ -110,20 +110,20 @@ def cmd_mark_pending(args: argparse.Namespace, ctx: Ctx) -> None:
     try:
         tokens = read_context_tokens(str(transcript))
     except (OSError, TranscriptSchemaError) as exc:
-        raise CliError("contesto non leggibile dal transcript (%s)" % type(exc).__name__) from None
+        raise CliError("context not readable from the transcript (%s)" % type(exc).__name__) from None
     if tokens is None:
-        raise CliError("contesto non leggibile dal transcript (nessun messaggio)")
+        raise CliError("context not readable from the transcript (no messages)")
     if args.stdin:
         text = read_text(ctx.stdin)
         if not text.strip():
-            raise CliError("checkpoint vuoto")
+            raise CliError("empty checkpoint")
         checkpoint = write_checkpoint(ctx.layout, session, text, ctx.now)
     else:
         checkpoint = Path(args.checkpoint).expanduser()
         if not checkpoint.is_file():
-            raise CliError("checkpoint non trovato: %s" % checkpoint)
+            raise CliError("checkpoint not found: %s" % checkpoint)
         if checkpoint.stat().st_size == 0:
-            raise CliError("checkpoint vuoto: %s" % checkpoint)
+            raise CliError("empty checkpoint: %s" % checkpoint)
     record = PendingRecord(
         checkpoint=str(checkpoint.resolve()),
         session_id=session,
@@ -138,11 +138,11 @@ def cmd_mark_pending(args: argparse.Namespace, ctx: Ctx) -> None:
     log_event(ctx.layout, "cli", "pitstop_done", session_id=session, context_tokens=tokens,
               checkpoint=record.checkpoint)
     config, _ = load_config(ctx.layout)
-    ctx.say("checkpoint registrato: %s" % record.checkpoint)
-    ctx.say("finestra ripartenza: %d minuti" % config.resume_window_minutes)
+    ctx.say("checkpoint registered: %s" % record.checkpoint)
+    ctx.say("resume window: %d minutes" % config.resume_window_minutes)
     # SDK hosts (T3 Code) have no /clear: there the session compacts and resumes in place.
     restart = "compact" if ctx.env.get(ENTRYPOINT_ENV, "").startswith("sdk") else "clear"
-    ctx.say("ripartenza: %s" % restart)
+    ctx.say("restart: %s" % restart)
     if restart == "compact":
         # Spelled out here and not only in SKILL.md: a session follows the skill text it loaded first (issue #1).
         for line in messages.compact_queue_lines():
@@ -155,41 +155,41 @@ def cmd_gap(args: argparse.Namespace, ctx: Ctx) -> None:
     entry = {"ts": round(ctx.now, 3), "session_id": session, "text": " ".join(args.text).strip()}
     append_line(ctx.layout.gaps, json.dumps(entry, ensure_ascii=False))
     log_event(ctx.layout, "cli", "gap", session_id=session)
-    ctx.say("🔋 buco del checkpoint registrato")
+    ctx.say("🔋 checkpoint gap recorded")
 
 
 def _current_context(args: argparse.Namespace, ctx: Ctx, session: Optional[str]) -> str:
     if not session:
-        return "non disponibile"
+        return "not available"
     try:
         tokens = read_context_tokens(str(_transcript(args, ctx, session)))
     except (CliError, OSError, TranscriptSchemaError):
-        return "non disponibile"
-    return messages.k(tokens) if tokens is not None else "non disponibile"
+        return "not available"
+    return messages.k(tokens) if tokens is not None else "not available"
 
 
 def cmd_status(args: argparse.Namespace, ctx: Ctx) -> None:
     config, config_error = load_config(ctx.layout)
     session = args.session or ctx.env.get(SESSION_ENV)
     if config_error:
-        ctx.say("🔋 pitstop: spento (config.json non valido → %s)" % config_error)
+        ctx.say("🔋 pitstop: off (invalid config.json → %s)" % config_error)
     elif not config.enabled:
-        ctx.say("🔋 pitstop: spento in tutte le sessioni")
+        ctx.say("🔋 pitstop: off in all sessions")
     elif session and load_state(ctx.layout, session).excluded:
-        ctx.say("🔋 pitstop: spento in questa sessione")
+        ctx.say("🔋 pitstop: off in this session")
     else:
-        ctx.say("🔋 pitstop: acceso")
-    ctx.say("notifiche: %s" % ("accese" if config.notify else "spente"))
-    ctx.say("contesto attuale: %s · soglia %s" % (_current_context(args, ctx, session),
+        ctx.say("🔋 pitstop: on")
+    ctx.say("notifications: %s" % ("on" if config.notify else "off"))
+    ctx.say("current context: %s · threshold %s" % (_current_context(args, ctx, session),
                                                  messages.k(config.threshold_tokens)))
     events = read_events(ctx.layout)
     done = sum(1 for e in events if e.get("action") == "pitstop_done")
     gaps = sum(1 for e in events if e.get("action") == "gap")
     bases = [e["resume_base"] for e in events
              if e.get("action") == "resume_base" and isinstance(e.get("resume_base"), int)]
-    ctx.say("pitstop fatti: %d · ripartenze reali: %d · buchi: %d" % (done, len(bases), gaps))
+    ctx.say("pitstops: %d · real resumes: %d · gaps: %d" % (done, len(bases), gaps))
     if bases:
-        ctx.say("ripartenza reale: ultima %s · mediana %s" % (messages.k(bases[-1]),
+        ctx.say("real resume size: last %s · median %s" % (messages.k(bases[-1]),
                                                              messages.k(int(statistics.median(bases)))))
 
 
@@ -207,7 +207,7 @@ _COMMANDS = {
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="pitstop",
-                                     description="Checkpoint past a context threshold and resume after /clear.")
+                                     description="Checkpoint past a context threshold and resume after /clear or /compact.")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("hook", help="run a Claude Code hook (event JSON on stdin)").add_argument("event")
     sub.add_parser("on", help="enable pitstop in all sessions")
@@ -219,7 +219,7 @@ def build_parser() -> argparse.ArgumentParser:
     status.add_argument("--session")
     status.add_argument("--transcript")
     sub.add_parser("new-checkpoint", help="print the path for a new checkpoint").add_argument("--session")
-    mark = sub.add_parser("mark-pending", help="register a checkpoint for the resume after /clear")
+    mark = sub.add_parser("mark-pending", help="register a checkpoint for the resume after /clear or /compact")
     source = mark.add_mutually_exclusive_group(required=True)
     source.add_argument("--checkpoint", help="checkpoint file already written")
     source.add_argument("--stdin", action="store_true", help="read the checkpoint text from stdin")
