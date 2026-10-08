@@ -18,7 +18,7 @@ class BinHookTest(TempLayoutTestCase):
         payload = {"hook_event_name": "Stop", "session_id": "s1", "transcript_path": str(transcript), "cwd": "/work/repo"}
         result = self.run_bin(json.dumps(payload).encode("utf-8"))
         self.assertEqual((result.returncode, result.stderr), (0, b""))
-        self.assertEqual(json.loads(result.stdout)["systemMessage"], "🔋 pitstop · 212K → ai box al prossimo punto pulito")
+        self.assertEqual(json.loads(result.stdout)["systemMessage"], "🔋 pitstop · 212K → pitting at the next clean point")
 
     def test_garbage_input_exits_zero_silently(self):
         result = self.run_bin(b"garbage")

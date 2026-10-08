@@ -34,15 +34,15 @@ class CliTestCase(TempLayoutTestCase):
 
 class ToggleCommandsTest(CliTestCase):
     def test_on_off_and_notify_update_config(self):
-        self.assertEqual(self.cli("off"), (0, "🔋 pitstop spento in tutte le sessioni\n"))
+        self.assertEqual(self.cli("off"), (0, "🔋 pitstop off in all sessions\n"))
         self.assertFalse(load_config(self.layout)[0].enabled)
-        self.assertEqual(self.cli("on"), (0, "🔋 pitstop acceso\n"))
+        self.assertEqual(self.cli("on"), (0, "🔋 pitstop on\n"))
         self.assertTrue(load_config(self.layout)[0].enabled)
-        self.assertEqual(self.cli("notify", "off"), (0, "🔋 notifiche pitstop spente\n"))
+        self.assertEqual(self.cli("notify", "off"), (0, "🔋 pitstop notifications off\n"))
         self.assertFalse(load_config(self.layout)[0].notify)
 
     def test_off_here_excludes_current_session_only(self):
-        self.assertEqual(self.cli("off-here"), (0, "🔋 pitstop spento in questa sessione\n"))
+        self.assertEqual(self.cli("off-here"), (0, "🔋 pitstop off in this session\n"))
         self.assertTrue(load_state(self.layout, "s1").excluded)
         self.assertFalse(load_state(self.layout, "s2").excluded)
 
@@ -68,7 +68,7 @@ class MarkPendingTest(CliTestCase):
         path.write_text("# Checkpoint", encoding="utf-8")
         code, out = self.cli("mark-pending", "--checkpoint", str(path), "--cwd", "/work/repo")
         self.assertEqual(code, 0)
-        self.assertTrue(out.endswith("🔋 **pitstop** · fatto a 212K → rientro in pista pulito\n"))
+        self.assertTrue(out.endswith("🔋 **pitstop** · done at 212K → back on track with a clean context\n"))
         record = self.consume()
         self.assertEqual((record.context_tokens, record.title, record.cwd, record.plan),
                          (212010, "Piano pitstop", "/work/repo", None))
@@ -84,20 +84,20 @@ class MarkPendingTest(CliTestCase):
                     env["CLAUDE_CODE_ENTRYPOINT"] = entrypoint
                 code, out = self.cli("mark-pending", "--checkpoint", str(checkpoint), env=env)
                 self.assertEqual(code, 0)
-                self.assertIn("ripartenza: %s\n" % mode, out)
+                self.assertIn("restart: %s\n" % mode, out)
 
     def test_compact_restart_spells_out_both_queued_messages(self):
         # The session follows the skill text it loaded first, so a later SKILL.md never reaches it: on
-        # 8 Oct 2026 a pitstop queued the /compact but not the «Riprendi» (issue #1). This output is always current.
+        # 8 Oct 2026 a pitstop queued the /compact but not the resume message (issue #1). This output is always current.
         checkpoint = self.tmp / "cp.md"
         checkpoint.write_text("# Checkpoint", encoding="utf-8")
         env = dict(SESSION_ENV, CLAUDE_CODE_ENTRYPOINT="sdk-ts")
         out = self.cli("mark-pending", "--checkpoint", str(checkpoint), env=env)[1]
-        self.assertIn('coda 1: /compact Riassunto di una sola riga: "Riprendi dal checkpoint pitstop."\n', out)
-        self.assertIn("coda 2: Riprendi dal checkpoint pitstop.\n", out)
-        self.assertLess(out.index("coda 1:"), out.index("coda 2:"))
+        self.assertIn('queue 1: /compact One-line summary: "Resume from the pitstop checkpoint."\n', out)
+        self.assertIn("queue 2: Resume from the pitstop checkpoint.\n", out)
+        self.assertLess(out.index("queue 1:"), out.index("queue 2:"))
         out = self.cli("mark-pending", "--checkpoint", str(checkpoint), env=dict(SESSION_ENV))[1]
-        self.assertNotIn("coda ", out)
+        self.assertNotIn("queue ", out)
 
     def test_cwd_defaults_to_transcript_and_plan_is_kept(self):
         checkpoint = self.tmp / "cp.md"
@@ -129,7 +129,7 @@ class MarkPendingTest(CliTestCase):
         checkpoint.write_text("# Checkpoint", encoding="utf-8")
         code, out = self.cli("mark-pending", "--checkpoint", str(checkpoint))
         self.assertEqual(code, 1)
-        self.assertIn("contesto", out)
+        self.assertIn("context", out)
 
 
 class StatusAndGapTest(CliTestCase):
@@ -137,21 +137,21 @@ class StatusAndGapTest(CliTestCase):
         log_event(self.layout, "cli", "pitstop_done", session_id="s1", context_tokens=212000)
         log_event(self.layout, "stop", "resume_base", session_id="s1", resume_base=70000)
         log_event(self.layout, "stop", "resume_base", session_id="s1", resume_base=90000)
-        self.assertEqual(self.cli("gap", "mancava", "il", "ledger"), (0, "🔋 buco del checkpoint registrato\n"))
+        self.assertEqual(self.cli("gap", "missing", "the", "ledger"), (0, "🔋 checkpoint gap recorded\n"))
         code, out = self.cli("status")
         self.assertEqual(code, 0)
         self.assertEqual(out.splitlines(), [
-            "🔋 pitstop: acceso",
-            "notifiche: accese",
-            "contesto attuale: 212K · soglia 200K",
-            "pitstop fatti: 1 · ripartenze reali: 2 · buchi: 1",
-            "ripartenza reale: ultima 90K · mediana 80K",
+            "🔋 pitstop: on",
+            "notifications: on",
+            "current context: 212K · threshold 200K",
+            "pitstops: 1 · real resumes: 2 · gaps: 1",
+            "real resume size: last 90K · median 80K",
         ])
         gaps = [json.loads(line) for line in self.layout.gaps.read_text(encoding="utf-8").splitlines()]
-        self.assertEqual((gaps[0]["session_id"], gaps[0]["text"]), ("s1", "mancava il ledger"))
+        self.assertEqual((gaps[0]["session_id"], gaps[0]["text"]), ("s1", "missing the ledger"))
         self.assertNotIn("ledger", self.layout.log.read_text(encoding="utf-8"))
 
     def test_status_reports_exclusion_and_missing_context(self):
         self.cli("off-here")
-        self.assertIn("🔋 pitstop: spento in questa sessione", self.cli("status")[1])
-        self.assertIn("contesto attuale: non disponibile", self.cli("status", env={})[1])
+        self.assertIn("🔋 pitstop: off in this session", self.cli("status")[1])
+        self.assertIn("current context: not available", self.cli("status", env={})[1])

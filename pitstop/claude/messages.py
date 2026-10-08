@@ -1,4 +1,4 @@
-"""Everything pitstop says. User-facing text is Italian; instructions for the model are English."""
+"""Everything pitstop says. All of it is English."""
 import time
 from typing import Optional
 
@@ -6,17 +6,17 @@ from pitstop.core.store import PendingRecord
 
 NOTIFY_TITLE = "pitstop"
 # The /compact the skill queues on its own thread in SDK hosts (T3 Code); the PreToolUse guard recognises it.
-COMPACT_SUMMARY = "Riprendi dal checkpoint pitstop."
-COMPACT_COMMAND = '/compact Riassunto di una sola riga: "%s"' % COMPACT_SUMMARY
+COMPACT_SUMMARY = "Resume from the pitstop checkpoint."
+COMPACT_COMMAND = '/compact One-line summary: "%s"' % COMPACT_SUMMARY
 
 
 def compact_queue_lines() -> list:
     """What the skill queues, in order, on its own thread in SDK hosts: the /compact, then the message that starts
     the first turn after it. Printed by mark-pending, because a session keeps the skill text it loaded first."""
     return [
-        'coda: con t3_thread_send (mode "queue"), in quest\'ordine:',
-        "coda 1: %s" % COMPACT_COMMAND,
-        "coda 2: %s" % COMPACT_SUMMARY,
+        'queue: with t3_thread_send (mode "queue"), in this order:',
+        "queue 1: %s" % COMPACT_COMMAND,
+        "queue 2: %s" % COMPACT_SUMMARY,
     ]
 BADGE = "🔋"
 
@@ -26,39 +26,39 @@ def k(tokens: int) -> str:
 
 
 def banner_triggered(tokens: int) -> str:
-    return "🔋 pitstop · %s → ai box al prossimo punto pulito" % k(tokens)
+    return "🔋 pitstop · %s → pitting at the next clean point" % k(tokens)
 
 
 def banner_resumed(tokens: int) -> str:
-    return "🔋 pitstop · ripartito da %s" % k(tokens)
+    return "🔋 pitstop · resumed from %s" % k(tokens)
 
 
 def banner_config_invalid(error: str) -> str:
-    return "🔋 pitstop · spento: config.json non valido → %s" % error
+    return "🔋 pitstop · off: invalid config.json → %s" % error
 
 
 def banner_checkpoint_missing() -> str:
-    return "🔋 pitstop · checkpoint non trovato, riparto senza"
+    return "🔋 pitstop · checkpoint not found, starting without it"
 
 
 def banner_checkpoint_expired() -> str:
-    return "🔋 pitstop · checkpoint scaduto, riparto senza"
+    return "🔋 pitstop · checkpoint expired, starting without it"
 
 
 def notify_triggered(tokens: int) -> str:
-    return "Ai box a %s: checkpoint al prossimo punto pulito" % k(tokens)
+    return "Pitting at %s: checkpoint at the next clean point" % k(tokens)
 
 
 def notify_resumed(tokens: int) -> str:
-    return "Ripartito da %s" % k(tokens)
+    return "Resumed from %s" % k(tokens)
 
 
 def done_line(tokens: int) -> str:
-    return "🔋 **pitstop** · fatto a %s → rientro in pista pulito" % k(tokens)
+    return "🔋 **pitstop** · done at %s → back on track with a clean context" % k(tokens)
 
 
 def resumed_line(tokens: int) -> str:
-    return "🔋 **pitstop** · ripartito da %s · Dove eravamo:" % k(tokens)
+    return "🔋 **pitstop** · resumed from %s · Where we were:" % k(tokens)
 
 
 def badge_title(title: Optional[str]) -> Optional[str]:
@@ -112,7 +112,7 @@ def resume_context(record: PendingRecord, checkpoint_text: str, cli: str) -> str
         "<pitstop-checkpoint>\n{text}\n</pitstop-checkpoint>\n\n"
         "Resume:\n"
         "1. Re-read only the files the checkpoint cites that the next action needs. Do not re-explore.\n"
-        "2. Print exactly `{line}` followed by three short lines in Italian: goal, current state, next action.\n"
+        "2. Print exactly `{line}` followed by three short lines in the language of the conversation: goal, current state, next action.\n"
         "3. Continue from the next action.\n"
         "4. If something you need is missing from the checkpoint, run "
         "`/usr/bin/python3 {cli} gap \"<what was missing>\"`, then recover it.\n"
@@ -124,8 +124,8 @@ def resume_context(record: PendingRecord, checkpoint_text: str, cli: str) -> str
 
 
 def expired_line(hhmm: str, checkpoint: str) -> str:
-    return ("🔋 **pitstop** · checkpoint scaduto (fatto alle %s): %s — scrivi «riprendi dal checkpoint» "
-            "per ripartire da lì" % (hhmm, checkpoint))
+    return ("🔋 **pitstop** · checkpoint expired (taken at %s): %s — say “resume from the checkpoint” "
+            "to pick up from there" % (hhmm, checkpoint))
 
 
 def expired_context(record: PendingRecord) -> str:

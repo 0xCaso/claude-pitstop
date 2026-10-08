@@ -67,7 +67,7 @@ class ConsumePendingTest(TempLayoutTestCase):
     def test_expired_record_within_notice_horizon_is_not_consumed_but_kept(self):
         # Past the window (600s) but still inside the 24h notice horizon: consume_pending must not
         # resume it, but it also must not delete it — consume_expired_pending needs it to still be
-        # there to build the "checkpoint scaduto" notice.
+        # there to build the "checkpoint expired" notice.
         mark_pending(self.layout, record(created_at=NOW - 601))
         self.assertIsNone(self.consume())
         self.assertEqual(len(list(self.layout.pending_dir.iterdir())), 1)
@@ -117,7 +117,7 @@ class ConsumePendingTest(TempLayoutTestCase):
 
 
 class ConsumeExpiredPendingTest(TempLayoutTestCase):
-    """The counterpart to consume_pending used for the "checkpoint scaduto" notice: matches the same
+    """The counterpart to consume_pending used for the "checkpoint expired" notice: matches the same
     way a resume would, but only for records past the window and still inside the 24h horizon."""
 
     def checkpoint(self):

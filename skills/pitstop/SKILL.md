@@ -8,15 +8,17 @@ description: Use when the user types /pitstop (on, off, off here, now, status, n
 pitstop keeps the context small but complete. Past the threshold it saves a checkpoint at a clean point, then
 restarts from it. In the terminal it tells you to run `/clear`, and the first message after that resumes from the
 checkpoint. In T3 Code and other SDK hosts, where `/clear` does not exist, it compacts the conversation at the end
-of the turn and queues a «riprendi» right after it, so the compacted session resumes from the checkpoint by itself.
+of the turn and queues a resume message right after it, so the compacted session resumes from the checkpoint by
+itself.
 
 CLI, always with this interpreter and this path:
 
 ```bash
-/usr/bin/python3 ~/.claude/skills/pitstop/bin/pitstop <command>
+/usr/bin/python3 "${CLAUDE_PLUGIN_ROOT}/bin/pitstop" <command>
 ```
 
-Below, `pitstop <command>` means that full command.
+Below, `pitstop <command>` means that full command. A `[pitstop]` hook message also names the CLI path on its
+`cli:` line; when it does, use that one.
 
 In the `/` menu this skill appears as `/pitstop:pitstop`. Below, `/pitstop <cmd>` also means `/pitstop:pitstop <cmd>`.
 
@@ -48,7 +50,7 @@ A `[pitstop]` hook message gives you: mode, context, cwd, background tasks, and 
    - a brainstorming or grilling session is half-way.
 
    When in doubt, skip. To skip, print exactly this line and carry on normally:
-   `🔋 **pitstop** · saltato: <motivo in italiano>`
+   `🔋 **pitstop** · skipped: <reason>`
 3. Otherwise run the "Checkpoint procedure" with `--cwd <cwd from the message>`.
 
 ## Manual pitstop
@@ -59,66 +61,66 @@ A `[pitstop]` hook message gives you: mode, context, cwd, background tasks, and 
 
 1. Run `pitstop new-checkpoint`. It prints the checkpoint path P.
 2. Write the checkpoint (see "Checkpoint content") to P with the Write tool.
-   If the write fails or is refused, print `🔋 **pitstop** · fallito: checkpoint non scritto → continuo qui`
+   If the write fails or is refused, print `🔋 **pitstop** · failed: checkpoint not written → continuing here`
    and stop the procedure.
 3. Run `pitstop mark-pending --checkpoint P`, adding `--cwd <cwd>` for an automatic pitstop and
    `--plan <plan path>` when a superpowers plan is being executed. If it exits non-zero, print
-   `🔋 **pitstop** · fallito: <its reason> → continuo qui` and stop the procedure.
-4. Print the last line of its output (`🔋 **pitstop** · fatto a …`) as a line of its own.
-5. Restart, following mark-pending's `ripartenza:` output line. N is the window from its `finestra ripartenza: N
-   minuti` line.
-   - **`ripartenza: clear`** (terminal). Print, as the last line of your reply:
-     `Scrivi /clear, poi un messaggio qualsiasi (per esempio «riprendi»): riparto dal checkpoint entro N minuti.`
+   `🔋 **pitstop** · failed: <its reason> → continuing here` and stop the procedure.
+4. Print the last line of its output (`🔋 **pitstop** · done at …`) as a line of its own.
+5. Restart, following mark-pending's `restart:` output line. N is the window from its `resume window: N minutes`
+   line.
+   - **`restart: clear`** (terminal). Print, as the last line of your reply:
+     `Run /clear, then send any message (for example "resume"): I'll pick up from the checkpoint within N minutes.`
      Then end your turn. Do not call `mcp__ccd_session_mgmt__clear_session`: the desktop app drops the clear it
      queues.
-   - **`ripartenza: compact`** (T3 Code and other SDK hosts: `/clear` does not work there). If the tools
+   - **`restart: compact`** (T3 Code and other SDK hosts: `/clear` does not work there). If the tools
      `mcp__t3-code__t3_thread_configuration` and `mcp__t3-code__t3_thread_send` exist (load them with ToolSearch
      if they are deferred):
      1. Call `t3_thread_configuration` without `threadId`: it returns this thread's id.
      2. Call `t3_thread_send` with that `threadId`, `mode: "queue"` and, as `message`, exactly the text after
-        `coda 1: ` in mark-pending's output (today `/compact Riassunto di una sola riga: "Riprendi dal checkpoint pitstop."`).
+        `queue 1: ` in mark-pending's output (today `/compact One-line summary: "Resume from the pitstop checkpoint."`).
         T3 Code runs it as soon as this turn ends; the compacted session receives the checkpoint by itself.
      3. Only if step 2 succeeded, call `t3_thread_send` again with the same `threadId`, `mode: "queue"` and, as
-        `message`, exactly the text after `coda 2: ` (today `Riprendi dal checkpoint pitstop.`).
+        `message`, exactly the text after `queue 2: ` (today `Resume from the pitstop checkpoint.`).
         T3 Code delivers queued messages in order, so this one starts the first turn after the compaction and
         the session resumes without the user typing anything. Never skip it: without it the session waits for
         the user.
      4. Print, as the last line of your reply:
-        `Compatto la conversazione a fine turno e riparto da solo dal checkpoint.`
+        `Compacting the conversation at the end of this turn, then resuming from the checkpoint on my own.`
         If step 3 failed, print instead:
-        `Compatto la conversazione a fine turno: poi scrivi un messaggio qualsiasi (per esempio «riprendi») e riparto dal checkpoint.`
+        `Compacting the conversation at the end of this turn: then send any message (for example "resume") and I'll pick up from the checkpoint.`
         Then end your turn.
 
      Never queue this `/compact` outside this step: a hook refuses it when the session has no registered
      checkpoint. If those tools do not exist or a call fails, print instead, as the last line of your reply:
-     `Premi Compact context (o scrivi /compact Riassunto di una sola riga: "Riprendi dal checkpoint pitstop."): riparto dal checkpoint entro N minuti.`
+     `Press Compact context (or type /compact One-line summary: "Resume from the pitstop checkpoint."): I'll pick up from the checkpoint within N minutes.`
      Then end your turn.
 
    The restarted session receives the checkpoint by itself: do not paste it anywhere else.
 
 ## Checkpoint content
 
-Markdown, in Italian like the conversation, at most about 4K tokens. It points to files and artifacts and never
-summarizes them.
+Markdown, in the language of the conversation, at most about 4K tokens. It points to files and artifacts and
+never summarizes them.
 
 ```markdown
-# Checkpoint pitstop — <session topic>
+# pitstop checkpoint — <session topic>
 
-## Obiettivo
-## Stato attuale
-## Prossima azione
+## Goal
+## Current state
+## Next action
 <one precise action>
-## Decisioni prese
+## Decisions made
 - <decision> — <reason>
-## Preferenze dell'utente
+## User preferences
 - "<exact quote>"
-## Scartato
+## Discarded
 - <option> — <why>
-## Da rileggere
+## Re-read
 - `path/to/file:line` — <why the next action needs it>
-## Lavoro non salvato o non committato
-## Domande aperte
-## Skill suggerite
+## Unsaved or uncommitted work
+## Open questions
+## Suggested skills
 ```
 
 - Quote user preferences word for word.
@@ -130,10 +132,10 @@ summarizes them.
 ## Resuming
 
 The first message after `/clear` (any text), or the compacted session after `/compact`, arrives with a
-`[pitstop]` checkpoint; follow the steps in that message: re-read only the cited files the next action needs, print `🔋 **pitstop** · ripartito da <K> · Dove eravamo:`
-with three short lines (goal, state, next action), then continue. If something is missing, run
-`pitstop gap "<what was missing>"` and recover it.
+`[pitstop]` checkpoint; follow the steps in that message: re-read only the cited files the next action needs,
+print `🔋 **pitstop** · resumed from <K> · Where we were:` with three short lines (goal, state, next action), then
+continue. If something is missing, run `pitstop gap "<what was missing>"` and recover it.
 
 If the checkpoint had already expired (past the resume window but under 24 hours old), that first message
-instead carries a one-line notice with its path; answer normally and, only if the user later replies
-«riprendi dal checkpoint», read that file and follow these same steps.
+instead carries a one-line notice with its path; answer normally and, only if the user later asks to resume from
+the checkpoint, read that file and follow these same steps.

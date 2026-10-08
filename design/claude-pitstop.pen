@@ -1,0 +1,2027 @@
+{
+  "version": "2.21",
+  "children": [
+    {
+      "type": "frame",
+      "id": "bi8Au",
+      "x": 0,
+      "y": 0,
+      "name": "A · Baseline (current SVG)",
+      "clip": true,
+      "width": 880,
+      "height": 470,
+      "fill": "#fcfcfb",
+      "cornerRadius": 12,
+      "stroke": "#e4e3df",
+      "strokeWidth": 1,
+      "layout": "none",
+      "children": [
+        {
+          "type": "path",
+          "id": "E22X7k",
+          "x": 0,
+          "y": 0,
+          "name": "Grid 0",
+          "geometry": "M76 380l648 0",
+          "viewBox": [
+            0,
+            0,
+            880,
+            470
+          ],
+          "width": 880,
+          "height": 470,
+          "stroke": "#ecebe7",
+          "strokeWidth": 1
+        },
+        {
+          "type": "text",
+          "id": "ezpcT",
+          "x": 26,
+          "y": 372.96,
+          "name": "Y 0",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "0",
+          "lineHeight": 1.15,
+          "textAlign": "right",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "path",
+          "id": "Nkpfr",
+          "x": 0,
+          "y": 0,
+          "name": "Grid 200000",
+          "geometry": "M76 296.66667l648 0",
+          "viewBox": [
+            0,
+            0,
+            880,
+            470
+          ],
+          "width": 880,
+          "height": 470,
+          "stroke": "#ecebe7",
+          "strokeWidth": 1
+        },
+        {
+          "type": "text",
+          "id": "Vz9gX",
+          "x": 26,
+          "y": 289.62666666666667,
+          "name": "Y 200000",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "200K",
+          "lineHeight": 1.15,
+          "textAlign": "right",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "path",
+          "id": "WTTGa",
+          "x": 0,
+          "y": 0,
+          "name": "Grid 400000",
+          "geometry": "M76 213.33333l648 0",
+          "viewBox": [
+            0,
+            0,
+            880,
+            470
+          ],
+          "width": 880,
+          "height": 470,
+          "stroke": "#ecebe7",
+          "strokeWidth": 1
+        },
+        {
+          "type": "text",
+          "id": "kHLVW",
+          "x": 26,
+          "y": 206.29333333333335,
+          "name": "Y 400000",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "400K",
+          "lineHeight": 1.15,
+          "textAlign": "right",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "path",
+          "id": "ILCwZ",
+          "x": 0,
+          "y": 0,
+          "name": "Grid 600000",
+          "geometry": "M76 130l648 0",
+          "viewBox": [
+            0,
+            0,
+            880,
+            470
+          ],
+          "width": 880,
+          "height": 470,
+          "stroke": "#ecebe7",
+          "strokeWidth": 1
+        },
+        {
+          "type": "text",
+          "id": "YmleA",
+          "x": 26,
+          "y": 122.96,
+          "name": "Y 600000",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "600K",
+          "lineHeight": 1.15,
+          "textAlign": "right",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "wGvrw",
+          "x": 56,
+          "y": 388.96,
+          "name": "X 0",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "0",
+          "lineHeight": 1.15,
+          "textAlign": "center",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "uzssR",
+          "x": 167.72413793103448,
+          "y": 388.96,
+          "name": "X 25",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "25",
+          "lineHeight": 1.15,
+          "textAlign": "center",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "iJ7cm",
+          "x": 279.44827586206895,
+          "y": 388.96,
+          "name": "X 50",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "50",
+          "lineHeight": 1.15,
+          "textAlign": "center",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "PN2PV",
+          "x": 391.17241379310343,
+          "y": 388.96,
+          "name": "X 75",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "75",
+          "lineHeight": 1.15,
+          "textAlign": "center",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "UsVCl",
+          "x": 502.8965517241379,
+          "y": 388.96,
+          "name": "X 100",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "100",
+          "lineHeight": 1.15,
+          "textAlign": "center",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "W3iFCO",
+          "x": 614.6206896551724,
+          "y": 388.96,
+          "name": "X 125",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "125",
+          "lineHeight": 1.15,
+          "textAlign": "center",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "Xh3dw",
+          "x": 734,
+          "y": 388.96,
+          "name": "X unit",
+          "fill": "#8a8984",
+          "content": "turns",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "path",
+          "id": "m29pd1",
+          "x": 0,
+          "y": 0,
+          "name": "Area without",
+          "geometry": "M76 371.7l4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 0 250-648 0z",
+          "viewBox": [
+            0,
+            0,
+            880,
+            470
+          ],
+          "fill": "#eb68341a",
+          "width": 880,
+          "height": 470
+        },
+        {
+          "type": "path",
+          "id": "rjEWd",
+          "x": 0,
+          "y": 0,
+          "name": "Area with",
+          "geometry": "M76 371.7l4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5 64.1 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4 65 4.5-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5 65 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 0 50.8-648 0z",
+          "viewBox": [
+            0,
+            0,
+            880,
+            470
+          ],
+          "fill": "#2a78d61a",
+          "width": 880,
+          "height": 470
+        },
+        {
+          "type": "path",
+          "id": "Y3XsJ",
+          "x": 0,
+          "y": 0,
+          "name": "Threshold",
+          "geometry": "M76 296.66667l648 0",
+          "viewBox": [
+            0,
+            0,
+            880,
+            470
+          ],
+          "width": 880,
+          "height": 470,
+          "stroke": "#8a8984",
+          "strokeWidth": 1
+        },
+        {
+          "type": "text",
+          "id": "l96bL",
+          "x": 84,
+          "y": 277.62666666666667,
+          "name": "Threshold label",
+          "fill": "#52514e",
+          "content": "threshold 200K",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "path",
+          "id": "x3RYq",
+          "x": 0,
+          "y": 0,
+          "name": "Line without",
+          "geometry": "M76 371.7l4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7",
+          "viewBox": [
+            0,
+            0,
+            880,
+            470
+          ],
+          "width": 880,
+          "height": 470,
+          "stroke": "#eb6834",
+          "strokeWidth": 2,
+          "strokeLinejoin": "round",
+          "strokeLinecap": "round"
+        },
+        {
+          "type": "path",
+          "id": "o4BSW",
+          "x": 0,
+          "y": 0,
+          "name": "Line with",
+          "geometry": "M76 371.7l4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5 64.1 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4 65 4.5-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.4-1.6 4.5-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5 65 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.4-1.7 4.5-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6 4.5-1.7 4.4-1.7 4.5-1.6",
+          "viewBox": [
+            0,
+            0,
+            880,
+            470
+          ],
+          "width": 880,
+          "height": 470,
+          "stroke": "#2a78d6",
+          "strokeWidth": 2,
+          "strokeLinejoin": "round",
+          "strokeLinecap": "round"
+        },
+        {
+          "type": "path",
+          "id": "boCEv",
+          "x": 0,
+          "y": 0,
+          "name": "Baseline",
+          "geometry": "M76 380l648 0",
+          "viewBox": [
+            0,
+            0,
+            880,
+            470
+          ],
+          "width": 880,
+          "height": 470,
+          "stroke": "#e4e3df",
+          "strokeWidth": 1
+        },
+        {
+          "type": "text",
+          "id": "eSbCf",
+          "x": 734,
+          "y": 116.03999999999999,
+          "name": "End label without",
+          "fill": "#0b0b0b",
+          "content": "Without pitstop",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 13,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "SMJEg",
+          "x": 734,
+          "y": 133.96,
+          "name": "End value without",
+          "fill": "#52514e",
+          "content": "600K",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "SFHXt",
+          "x": 734,
+          "y": 315.2066666666667,
+          "name": "End label with",
+          "fill": "#0b0b0b",
+          "content": "With pitstop",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 13,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "HUP2j",
+          "x": 734,
+          "y": 333.12666666666667,
+          "name": "End value with",
+          "fill": "#52514e",
+          "content": "122K",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "n3pTs",
+          "x": 316.3862068965517,
+          "y": 357.7933333333333,
+          "name": "Drop note",
+          "fill": "#52514e",
+          "content": "pitstop at 226K → resume at 70K",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "e2NP1N",
+          "x": 32,
+          "y": 25.599999999999998,
+          "name": "Title",
+          "fill": "#0b0b0b",
+          "content": "Every turn re-reads the whole context",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 20,
+          "fontWeight": "650"
+        },
+        {
+          "type": "text",
+          "id": "O3R2AU",
+          "x": 32,
+          "y": 56.04,
+          "name": "Subtitle",
+          "fill": "#52514e",
+          "content": "Context size per turn in an illustrative session that grows by 4K tokens a turn",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 13
+        },
+        {
+          "type": "text",
+          "id": "j5GfgD",
+          "x": 688,
+          "y": 18.72,
+          "name": "Hero",
+          "fill": "#0b0b0b",
+          "textGrowth": "fixed-width",
+          "width": 160,
+          "content": "−57%",
+          "lineHeight": 1.15,
+          "textAlign": "right",
+          "fontFamily": "Inter",
+          "fontSize": 34,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "GW8DT",
+          "x": 608,
+          "y": 58.04,
+          "name": "Hero sub",
+          "fill": "#52514e",
+          "textGrowth": "fixed-width",
+          "width": 240,
+          "content": "tokens re-read over 146 turns",
+          "lineHeight": 1.15,
+          "textAlign": "right",
+          "fontFamily": "Inter",
+          "fontSize": 13
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 2,
+          "id": "VsmqV",
+          "x": 32,
+          "y": 87,
+          "name": "Key without",
+          "fill": "#eb6834",
+          "width": 14,
+          "height": 4
+        },
+        {
+          "type": "text",
+          "id": "UP6e1",
+          "x": 54,
+          "y": 81.03999999999999,
+          "name": "Key without label",
+          "fill": "#52514e",
+          "content": "Without pitstop",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 13
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 2,
+          "id": "r6aiV",
+          "x": 172,
+          "y": 87,
+          "name": "Key with",
+          "fill": "#2a78d6",
+          "width": 14,
+          "height": 4
+        },
+        {
+          "type": "text",
+          "id": "YhoZR",
+          "x": 194,
+          "y": 81.03999999999999,
+          "name": "Key with label",
+          "fill": "#52514e",
+          "content": "With pitstop",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 13
+        },
+        {
+          "type": "text",
+          "id": "B1OgsE",
+          "x": 32,
+          "y": 420.96,
+          "name": "Note 1",
+          "fill": "#52514e",
+          "content": "Trigger and resume sizes are the medians of 142 real pitstops (author's log, Sep–Oct 2026).",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "JjMwj",
+          "x": 32,
+          "y": 438.96,
+          "name": "Note 2",
+          "fill": "#52514e",
+          "content": "Re-read tokens are the area under each line; the checkpoint and the files read after a resume are not counted.",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 12
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "PGzeH",
+      "x": 960,
+      "y": 0,
+      "name": "B · Cumulative tokens re-read",
+      "clip": true,
+      "width": 880,
+      "height": 470,
+      "fill": "#fcfcfb",
+      "cornerRadius": 12,
+      "stroke": "#e4e3df",
+      "strokeWidth": 1,
+      "layout": "none",
+      "children": [
+        {
+          "type": "path",
+          "id": "Wvmwo",
+          "x": 0,
+          "y": 0,
+          "name": "Grid 0",
+          "geometry": "M76 380l624 0",
+          "viewBox": [
+            0,
+            0,
+            880,
+            470
+          ],
+          "width": 880,
+          "height": 470,
+          "stroke": "#ecebe7",
+          "strokeWidth": 1
+        },
+        {
+          "type": "text",
+          "id": "a0AM8",
+          "x": 26,
+          "y": 372.96,
+          "name": "Y 0",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "0",
+          "lineHeight": 1.15,
+          "textAlign": "right",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "path",
+          "id": "mMA5s",
+          "x": 0,
+          "y": 0,
+          "name": "Grid 10000000",
+          "geometry": "M76 330l624 0",
+          "viewBox": [
+            0,
+            0,
+            880,
+            470
+          ],
+          "width": 880,
+          "height": 470,
+          "stroke": "#ecebe7",
+          "strokeWidth": 1
+        },
+        {
+          "type": "text",
+          "id": "c3eqk",
+          "x": 26,
+          "y": 322.96,
+          "name": "Y 10000000",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "10M",
+          "lineHeight": 1.15,
+          "textAlign": "right",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "path",
+          "id": "ysK47",
+          "x": 0,
+          "y": 0,
+          "name": "Grid 20000000",
+          "geometry": "M76 280l624 0",
+          "viewBox": [
+            0,
+            0,
+            880,
+            470
+          ],
+          "width": 880,
+          "height": 470,
+          "stroke": "#ecebe7",
+          "strokeWidth": 1
+        },
+        {
+          "type": "text",
+          "id": "AqeRm",
+          "x": 26,
+          "y": 272.96,
+          "name": "Y 20000000",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "20M",
+          "lineHeight": 1.15,
+          "textAlign": "right",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "path",
+          "id": "d4G0y",
+          "x": 0,
+          "y": 0,
+          "name": "Grid 30000000",
+          "geometry": "M76 230l624 0",
+          "viewBox": [
+            0,
+            0,
+            880,
+            470
+          ],
+          "width": 880,
+          "height": 470,
+          "stroke": "#ecebe7",
+          "strokeWidth": 1
+        },
+        {
+          "type": "text",
+          "id": "Hj1Dy",
+          "x": 26,
+          "y": 222.96,
+          "name": "Y 30000000",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "30M",
+          "lineHeight": 1.15,
+          "textAlign": "right",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "path",
+          "id": "DaFKL",
+          "x": 0,
+          "y": 0,
+          "name": "Grid 40000000",
+          "geometry": "M76 180l624 0",
+          "viewBox": [
+            0,
+            0,
+            880,
+            470
+          ],
+          "width": 880,
+          "height": 470,
+          "stroke": "#ecebe7",
+          "strokeWidth": 1
+        },
+        {
+          "type": "text",
+          "id": "ifWwn",
+          "x": 26,
+          "y": 172.96,
+          "name": "Y 40000000",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "40M",
+          "lineHeight": 1.15,
+          "textAlign": "right",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "path",
+          "id": "whzap",
+          "x": 0,
+          "y": 0,
+          "name": "Grid 50000000",
+          "geometry": "M76 130l624 0",
+          "viewBox": [
+            0,
+            0,
+            880,
+            470
+          ],
+          "width": 880,
+          "height": 470,
+          "stroke": "#ecebe7",
+          "strokeWidth": 1
+        },
+        {
+          "type": "text",
+          "id": "nLF1Z",
+          "x": 26,
+          "y": 122.96,
+          "name": "Y 50000000",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "50M",
+          "lineHeight": 1.15,
+          "textAlign": "right",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "kF4cy",
+          "x": 56,
+          "y": 388.96,
+          "name": "X 0",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "0",
+          "lineHeight": 1.15,
+          "textAlign": "center",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "Zs6MC",
+          "x": 163.58620689655174,
+          "y": 388.96,
+          "name": "X 25",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "25",
+          "lineHeight": 1.15,
+          "textAlign": "center",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "dzF0i",
+          "x": 271.1724137931035,
+          "y": 388.96,
+          "name": "X 50",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "50",
+          "lineHeight": 1.15,
+          "textAlign": "center",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "MRocJ",
+          "x": 378.7586206896552,
+          "y": 388.96,
+          "name": "X 75",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "75",
+          "lineHeight": 1.15,
+          "textAlign": "center",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "N5U9e",
+          "x": 486.3448275862069,
+          "y": 388.96,
+          "name": "X 100",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "100",
+          "lineHeight": 1.15,
+          "textAlign": "center",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "kKjKK",
+          "x": 593.9310344827586,
+          "y": 388.96,
+          "name": "X 125",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 40,
+          "content": "125",
+          "lineHeight": 1.15,
+          "textAlign": "center",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "Djw3y",
+          "x": 710,
+          "y": 388.96,
+          "name": "X unit",
+          "fill": "#8a8984",
+          "content": "turns",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "path",
+          "id": "tHqid",
+          "x": 0,
+          "y": 0,
+          "name": "Saved area",
+          "geometry": "M76 379.9l4.3-0.1 4.3-0.2 4.3-0.1 4.3-0.2 4.3-0.2 4.3-0.2 4.3-0.3 4.3-0.2 4.3-0.3 4.3-0.3 4.3-0.3 4.3-0.4 4.3-0.3 4.3-0.4 4.4-0.4 4.3-0.4 4.3-0.5 4.3-0.4 4.3-0.5 4.3-0.5 4.3-0.5 4.3-0.6 4.3-0.5 4.3-0.6 4.3-0.6 4.3-0.6 4.3-0.7 4.3-0.6 4.3-0.7 4.3-0.7 4.3-0.7 4.3-0.8 4.3-0.7 4.3-0.8 4.3-0.8 4.3-0.8 4.3-0.9 4.3-0.8 4.3-0.9 4.3-0.9 4.3-0.9 4.3-1 4.3-0.9 4.4-1 4.3-1 4.3-1 4.3-1.1 4.3-1 4.3-1.1 4.3-1.1 4.3-1.1 4.3-1.2 4.3-1.1 4.3-1.2 4.3-1.2 4.3-1.2 4.3-1.3 4.3-1.2 4.3-1.3 4.3-1.3 4.3-1.3 4.3-1.4 4.3-1.3 4.3-1.4 4.3-1.4 4.3-1.4 4.3-1.5 4.3-1.4 4.3-1.5 4.3-1.5 4.3-1.5 4.3-1.6 4.4-1.5 4.3-1.6 4.3-1.6 4.3-1.6 4.3-1.7 4.3-1.6 4.3-1.7 4.3-1.7 4.3-1.7 4.3-1.8 4.3-1.7 4.3-1.8 4.3-1.8 4.3-1.8 4.3-1.9 4.3-1.8 4.3-1.9 4.3-1.9 4.3-1.9 4.3-2 4.3-1.9 4.3-2 4.3-2 4.3-2 4.3-2.1 4.3-2 4.3-2.1 4.3-2.1 4.3-2.1 4.4-2.2 4.3-2.1 4.3-2.2 4.3-2.2 4.3-2.2 4.3-2.3 4.3-2.2 4.3-2.3 4.3-2.3 4.3-2.3 4.3-2.4 4.3-2.3 4.3-2.4 4.3-2.4 4.3-2.4 4.3-2.5 4.3-2.4 4.3-2.5 4.3-2.5 4.3-2.5 4.3-2.6 4.3-2.5 4.3-2.6 4.3-2.6 4.3-2.6 4.3-2.7 4.3-2.6 4.3-2.7 4.3-2.7 4.4-2.7 4.3-2.8 4.3-2.7 4.3-2.8 4.3-2.8 4.3-2.8 4.3-2.9 4.3-2.8 4.3-2.9 4.3-2.9 4.3-2.9 4.3-3 4.3-2.9 4.3-3 4.3-3 0 128.7-4.3 0.6-4.3 0.6-4.3 0.5-4.3 0.6-4.3 0.5-4.3 0.5-4.3 0.5-4.3 0.5-4.3 0.4-4.3 0.5-4.3 0.4-4.3 0.4-4.3 0.3-4.3 0.4-4.4 1.1-4.3 1.1-4.3 1.1-4.3 1.1-4.3 1-4.3 1.1-4.3 1-4.3 1-4.3 0.9-4.3 1-4.3 0.9-4.3 0.9-4.3 0.9-4.3 0.9-4.3 0.8-4.3 0.9-4.3 0.8-4.3 0.8-4.3 0.7-4.3 0.8-4.3 0.7-4.3 0.7-4.3 0.7-4.3 0.7-4.3 0.6-4.3 0.7-4.3 0.6-4.3 0.6-4.3 0.5-4.4 0.6-4.3 0.5-4.3 0.5-4.3 0.5-4.3 0.5-4.3 0.4-4.3 0.5-4.3 0.4-4.3 0.4-4.3 0.3-4.3 0.4-4.3 1.1-4.3 1.1-4.3 1.1-4.3 1.1-4.3 1-4.3 1.1-4.3 1-4.3 1-4.3 0.9-4.3 1-4.3 0.9-4.3 0.9-4.3 0.9-4.3 0.9-4.3 0.8-4.3 0.9-4.3 0.8-4.3 0.8-4.4 0.7-4.3 0.8-4.3 0.7-4.3 0.7-4.3 0.7-4.3 0.7-4.3 0.6-4.3 0.7-4.3 0.6-4.3 0.6-4.3 0.5-4.3 0.6-4.3 0.5-4.3 0.5-4.3 0.5-4.3 0.5-4.3 0.4-4.3 0.5-4.3 0.4-4.3 0.4-4.3 0.3-4.3 0.4-4.3 1.1-4.3 1.1-4.3 1.1-4.3 1-4.3 1.1-4.3 1-4.3 1-4.4 1-4.3 0.9-4.3 1-4.3 0.9-4.3 0.9-4.3 0.9-4.3 0.8-4.3 0.9-4.3 0.8-4.3 0.8-4.3 0.8-4.3 0.7-4.3 0.8-4.3 0.7-4.3 0.7-4.3 0.7-4.3 0.6-4.3 0.7-4.3 0.6-4.3 0.6-4.3 0.6-4.3 0.5-4.3 0.6-4.3 0.5-4.3 0.5-4.3 0.5-4.3 0.4-4.3 0.5-4.3 0.4-4.4 0.4-4.3 0.4-4.3 0.3-4.3 0.4-4.3 0.3-4.3 0.3-4.3 0.3-4.3 0.2-4.3 0.3-4.3 0.2-4.3 0.2-4.3 0.2-4.3 0.1-4.3 0.2-4.3 0.1z",
+          "viewBox": [
+            0,
+            0,
+            880,
+            470
+          ],
+          "fill": "#2a78d61f",
+          "width": 880,
+          "height": 470
+        },
+        {
+          "type": "path",
+          "id": "FGJ45",
+          "x": 0,
+          "y": 0,
+          "name": "Line without",
+          "geometry": "M76 379.9l4.3-0.1 4.3-0.2 4.3-0.1 4.3-0.2 4.3-0.2 4.3-0.2 4.3-0.3 4.3-0.2 4.3-0.3 4.3-0.3 4.3-0.3 4.3-0.4 4.3-0.3 4.3-0.4 4.4-0.4 4.3-0.4 4.3-0.5 4.3-0.4 4.3-0.5 4.3-0.5 4.3-0.5 4.3-0.6 4.3-0.5 4.3-0.6 4.3-0.6 4.3-0.6 4.3-0.7 4.3-0.6 4.3-0.7 4.3-0.7 4.3-0.7 4.3-0.8 4.3-0.7 4.3-0.8 4.3-0.8 4.3-0.8 4.3-0.9 4.3-0.8 4.3-0.9 4.3-0.9 4.3-0.9 4.3-1 4.3-0.9 4.4-1 4.3-1 4.3-1 4.3-1.1 4.3-1 4.3-1.1 4.3-1.1 4.3-1.1 4.3-1.2 4.3-1.1 4.3-1.2 4.3-1.2 4.3-1.2 4.3-1.3 4.3-1.2 4.3-1.3 4.3-1.3 4.3-1.3 4.3-1.4 4.3-1.3 4.3-1.4 4.3-1.4 4.3-1.4 4.3-1.5 4.3-1.4 4.3-1.5 4.3-1.5 4.3-1.5 4.3-1.6 4.4-1.5 4.3-1.6 4.3-1.6 4.3-1.6 4.3-1.7 4.3-1.6 4.3-1.7 4.3-1.7 4.3-1.7 4.3-1.8 4.3-1.7 4.3-1.8 4.3-1.8 4.3-1.8 4.3-1.9 4.3-1.8 4.3-1.9 4.3-1.9 4.3-1.9 4.3-2 4.3-1.9 4.3-2 4.3-2 4.3-2 4.3-2.1 4.3-2 4.3-2.1 4.3-2.1 4.3-2.1 4.4-2.2 4.3-2.1 4.3-2.2 4.3-2.2 4.3-2.2 4.3-2.3 4.3-2.2 4.3-2.3 4.3-2.3 4.3-2.3 4.3-2.4 4.3-2.3 4.3-2.4 4.3-2.4 4.3-2.4 4.3-2.5 4.3-2.4 4.3-2.5 4.3-2.5 4.3-2.5 4.3-2.6 4.3-2.5 4.3-2.6 4.3-2.6 4.3-2.6 4.3-2.7 4.3-2.6 4.3-2.7 4.3-2.7 4.4-2.7 4.3-2.8 4.3-2.7 4.3-2.8 4.3-2.8 4.3-2.8 4.3-2.9 4.3-2.8 4.3-2.9 4.3-2.9 4.3-2.9 4.3-3 4.3-2.9 4.3-3 4.3-3",
+          "viewBox": [
+            0,
+            0,
+            880,
+            470
+          ],
+          "width": 880,
+          "height": 470,
+          "stroke": "#eb6834",
+          "strokeWidth": 2,
+          "strokeLinejoin": "round",
+          "strokeLinecap": "round"
+        },
+        {
+          "type": "path",
+          "id": "XjVGd",
+          "x": 0,
+          "y": 0,
+          "name": "Line with",
+          "geometry": "M76 379.9l4.3-0.1 4.3-0.2 4.3-0.1 4.3-0.2 4.3-0.2 4.3-0.2 4.3-0.3 4.3-0.2 4.3-0.3 4.3-0.3 4.3-0.3 4.3-0.4 4.3-0.3 4.3-0.4 4.4-0.4 4.3-0.4 4.3-0.5 4.3-0.4 4.3-0.5 4.3-0.5 4.3-0.5 4.3-0.6 4.3-0.5 4.3-0.6 4.3-0.6 4.3-0.6 4.3-0.7 4.3-0.6 4.3-0.7 4.3-0.7 4.3-0.7 4.3-0.8 4.3-0.7 4.3-0.8 4.3-0.8 4.3-0.8 4.3-0.9 4.3-0.8 4.3-0.9 4.3-0.9 4.3-0.9 4.3-1 4.3-0.9 4.4-1 4.3-1 4.3-1 4.3-1.1 4.3-1 4.3-1.1 4.3-1.1 4.3-1.1 4.3-0.4 4.3-0.3 4.3-0.4 4.3-0.4 4.3-0.5 4.3-0.4 4.3-0.5 4.3-0.5 4.3-0.5 4.3-0.5 4.3-0.6 4.3-0.5 4.3-0.6 4.3-0.6 4.3-0.7 4.3-0.6 4.3-0.7 4.3-0.7 4.3-0.7 4.3-0.7 4.3-0.8 4.4-0.7 4.3-0.8 4.3-0.8 4.3-0.9 4.3-0.8 4.3-0.9 4.3-0.9 4.3-0.9 4.3-0.9 4.3-1 4.3-0.9 4.3-1 4.3-1 4.3-1.1 4.3-1 4.3-1.1 4.3-1.1 4.3-1.1 4.3-1.1 4.3-0.4 4.3-0.3 4.3-0.4 4.3-0.4 4.3-0.5 4.3-0.4 4.3-0.5 4.3-0.5 4.3-0.5 4.3-0.5 4.4-0.6 4.3-0.5 4.3-0.6 4.3-0.6 4.3-0.7 4.3-0.6 4.3-0.7 4.3-0.7 4.3-0.7 4.3-0.7 4.3-0.8 4.3-0.7 4.3-0.8 4.3-0.8 4.3-0.9 4.3-0.8 4.3-0.9 4.3-0.9 4.3-0.9 4.3-0.9 4.3-1 4.3-0.9 4.3-1 4.3-1 4.3-1.1 4.3-1 4.3-1.1 4.3-1.1 4.3-1.1 4.4-1.1 4.3-0.4 4.3-0.3 4.3-0.4 4.3-0.4 4.3-0.5 4.3-0.4 4.3-0.5 4.3-0.5 4.3-0.5 4.3-0.5 4.3-0.6 4.3-0.5 4.3-0.6 4.3-0.6",
+          "viewBox": [
+            0,
+            0,
+            880,
+            470
+          ],
+          "width": 880,
+          "height": 470,
+          "stroke": "#2a78d6",
+          "strokeWidth": 2,
+          "strokeLinejoin": "round",
+          "strokeLinecap": "round"
+        },
+        {
+          "type": "path",
+          "id": "P78yMG",
+          "x": 0,
+          "y": 0,
+          "name": "Baseline",
+          "geometry": "M76 380l624 0",
+          "viewBox": [
+            0,
+            0,
+            880,
+            470
+          ],
+          "width": 880,
+          "height": 470,
+          "stroke": "#e4e3df",
+          "strokeWidth": 1
+        },
+        {
+          "type": "text",
+          "id": "g23dbT",
+          "x": 712,
+          "y": 139.73999999999998,
+          "name": "End label without",
+          "fill": "#0b0b0b",
+          "content": "Without pitstop",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 13,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "GF4bk",
+          "x": 712,
+          "y": 157.66,
+          "name": "End value without",
+          "fill": "#52514e",
+          "content": "45.3M tokens",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "Dypr2",
+          "x": 712,
+          "y": 268.40000000000003,
+          "name": "End label with",
+          "fill": "#0b0b0b",
+          "content": "With pitstop",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 13,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "O0Us4d",
+          "x": 712,
+          "y": 286.32,
+          "name": "End value with",
+          "fill": "#52514e",
+          "content": "19.5M tokens",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "cyV7A",
+          "x": 283.8068965517241,
+          "y": 248.98499999999999,
+          "name": "Saved label",
+          "fill": "#0b0b0b",
+          "textGrowth": "fixed-width",
+          "width": 150,
+          "content": "25.7M fewer",
+          "lineHeight": 1.15,
+          "textAlign": "right",
+          "fontFamily": "Inter",
+          "fontSize": 13,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "poNhj",
+          "x": 283.8068965517241,
+          "y": 266.905,
+          "name": "Saved sub",
+          "fill": "#52514e",
+          "textGrowth": "fixed-width",
+          "width": 150,
+          "content": "tokens re-read",
+          "lineHeight": 1.15,
+          "textAlign": "right",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "t9yJs",
+          "x": 32,
+          "y": 25.599999999999998,
+          "name": "Title",
+          "fill": "#0b0b0b",
+          "content": "Every turn re-reads the whole context",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 20,
+          "fontWeight": "650"
+        },
+        {
+          "type": "text",
+          "id": "M0OcI",
+          "x": 32,
+          "y": 56.04,
+          "name": "Subtitle",
+          "fill": "#52514e",
+          "content": "Tokens re-read so far, in an illustrative session that grows by 4K tokens a turn",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 13
+        },
+        {
+          "type": "text",
+          "id": "ywzUQ",
+          "x": 688,
+          "y": 18.72,
+          "name": "Hero",
+          "fill": "#0b0b0b",
+          "textGrowth": "fixed-width",
+          "width": 160,
+          "content": "−57%",
+          "lineHeight": 1.15,
+          "textAlign": "right",
+          "fontFamily": "Inter",
+          "fontSize": 34,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "Eck2t",
+          "x": 608,
+          "y": 58.04,
+          "name": "Hero sub",
+          "fill": "#52514e",
+          "textGrowth": "fixed-width",
+          "width": 240,
+          "content": "tokens re-read over 146 turns",
+          "lineHeight": 1.15,
+          "textAlign": "right",
+          "fontFamily": "Inter",
+          "fontSize": 13
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 2,
+          "id": "QNpYq",
+          "x": 32,
+          "y": 87,
+          "name": "Key without",
+          "fill": "#eb6834",
+          "width": 14,
+          "height": 4
+        },
+        {
+          "type": "text",
+          "id": "S71Xb",
+          "x": 54,
+          "y": 81.03999999999999,
+          "name": "Key without label",
+          "fill": "#52514e",
+          "content": "Without pitstop",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 13
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 2,
+          "id": "kKm3h",
+          "x": 172,
+          "y": 87,
+          "name": "Key with",
+          "fill": "#2a78d6",
+          "width": 14,
+          "height": 4
+        },
+        {
+          "type": "text",
+          "id": "aWZq2",
+          "x": 194,
+          "y": 81.03999999999999,
+          "name": "Key with label",
+          "fill": "#52514e",
+          "content": "With pitstop: back to 70K each time context passes 226K",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 13
+        },
+        {
+          "type": "text",
+          "id": "D1xE3I",
+          "x": 32,
+          "y": 420.96,
+          "name": "Note 1",
+          "fill": "#52514e",
+          "content": "Trigger and resume sizes are the medians of 142 real pitstops (author's log, Sep–Oct 2026).",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "text",
+          "id": "mxcMs",
+          "x": 32,
+          "y": 438.96,
+          "name": "Note 2",
+          "fill": "#52514e",
+          "content": "The checkpoint and the files read after a resume are not counted.",
+          "lineHeight": 1.15,
+          "fontFamily": "Inter",
+          "fontSize": 12
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Pzm98",
+      "x": 1920,
+      "y": 0,
+      "name": "C · Hero number + totals",
+      "clip": true,
+      "width": 880,
+      "height": 470,
+      "fill": "#fcfcfb",
+      "cornerRadius": 12,
+      "stroke": "#e4e3df",
+      "strokeWidth": 1,
+      "layout": "vertical",
+      "gap": 24,
+      "padding": 32,
+      "children": [
+        {
+          "type": "frame",
+          "id": "hxac0",
+          "name": "Header",
+          "layout": "vertical",
+          "gap": 6,
+          "children": [
+            {
+              "type": "text",
+              "id": "kSMB0",
+              "name": "Title",
+              "fill": "#0b0b0b",
+              "content": "Every turn re-reads the whole context",
+              "fontFamily": "Inter",
+              "fontSize": 20,
+              "fontWeight": "650"
+            },
+            {
+              "type": "text",
+              "id": "s3MlJf",
+              "name": "Subtitle",
+              "fill": "#52514e",
+              "content": "An illustrative session of 146 turns that grows by 4K tokens a turn",
+              "fontFamily": "Inter",
+              "fontSize": 13
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "V13NKu",
+          "name": "Hero row",
+          "width": "fill_container",
+          "gap": 48,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "W8QGe",
+              "name": "Hero",
+              "width": 220,
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "K6H7kc",
+                  "name": "Hero value",
+                  "fill": "#0b0b0b",
+                  "content": "−57%",
+                  "lineHeight": 1,
+                  "fontFamily": "Inter",
+                  "fontSize": 64,
+                  "fontWeight": "700",
+                  "letterSpacing": -1.5
+                },
+                {
+                  "type": "text",
+                  "id": "C6MBX",
+                  "name": "Hero caption",
+                  "fill": "#52514e",
+                  "content": "fewer tokens re-read",
+                  "fontFamily": "Inter",
+                  "fontSize": 14
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "lZh8P",
+              "name": "Totals",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "PMvE1",
+                  "name": "Bar Without pitstop",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "bWIc0",
+                      "name": "Labels",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "hn9Ho",
+                          "name": "Name",
+                          "fill": "#0b0b0b",
+                          "content": "Without pitstop",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "NamUv",
+                          "name": "Value",
+                          "fill": "#52514e",
+                          "content": "45.3M tokens re-read",
+                          "fontFamily": "Inter",
+                          "fontSize": 13
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "V3p7Na",
+                      "name": "Track",
+                      "width": "fill_container",
+                      "height": 14,
+                      "fill": "#f1f0ec",
+                      "cornerRadius": 4,
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 4,
+                          "id": "DeTzy",
+                          "name": "Bar",
+                          "fill": "#eb6834",
+                          "width": 548,
+                          "height": 14
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "A50vF2",
+                  "name": "Bar With pitstop",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "rPawL",
+                      "name": "Labels",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "KpbN5",
+                          "name": "Name",
+                          "fill": "#0b0b0b",
+                          "content": "With pitstop",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Tvcqn",
+                          "name": "Value",
+                          "fill": "#52514e",
+                          "content": "19.5M tokens re-read",
+                          "fontFamily": "Inter",
+                          "fontSize": 13
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Ld0mw",
+                      "name": "Track",
+                      "width": "fill_container",
+                      "height": 14,
+                      "fill": "#f1f0ec",
+                      "cornerRadius": 4,
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 4,
+                          "id": "B7PLhP",
+                          "name": "Bar",
+                          "fill": "#2a78d6",
+                          "width": 236,
+                          "height": 14
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "pw0G1",
+          "name": "Sparkline",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "YzmCQ",
+              "name": "Spark label",
+              "fill": "#8a8984",
+              "content": "Context size per turn: pitstop cuts it from 226K back to 70K",
+              "fontFamily": "Inter",
+              "fontSize": 12
+            },
+            {
+              "type": "frame",
+              "id": "MJqvR",
+              "name": "Plot",
+              "width": "fill_container",
+              "height": 128,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "path",
+                  "id": "n2VPL4",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Baseline",
+                  "geometry": "M0 127l816 0",
+                  "viewBox": [
+                    0,
+                    0,
+                    816,
+                    128
+                  ],
+                  "width": 816,
+                  "height": 128,
+                  "stroke": "#e4e3df",
+                  "strokeWidth": 1
+                },
+                {
+                  "type": "path",
+                  "id": "hLGBm",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Without",
+                  "geometry": "M0 121.9l5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.7-0.8 5.6-0.9 5.6-0.8 5.6-0.8 5.7-0.8 5.6-0.9 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.7-0.8 5.6-0.9 5.6-0.8 5.6-0.8 5.7-0.8 5.6-0.9 5.6-0.8 5.6-0.8 5.7-0.8 5.6-0.9 5.6-0.8 5.7-0.8 5.6-0.9 5.6-0.8 5.6-0.8 5.7-0.8 5.6-0.9 5.6-0.8 5.7-0.8 5.6-0.8 5.6-0.9 5.6-0.8 5.7-0.8 5.6-0.8 5.6-0.9 5.6-0.8 5.7-0.8 5.6-0.9 5.6-0.8 5.7-0.8 5.6-0.8 5.6-0.9 5.6-0.8 5.7-0.8 5.6-0.8 5.6-0.9 5.6-0.8 5.7-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.9 5.6-0.8 5.7-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8",
+                  "viewBox": [
+                    0,
+                    0,
+                    816,
+                    128
+                  ],
+                  "width": 816,
+                  "height": 128,
+                  "stroke": "#eb6834",
+                  "strokeWidth": 2,
+                  "strokeLinejoin": "round",
+                  "strokeLinecap": "round"
+                },
+                {
+                  "type": "path",
+                  "id": "AtkIr",
+                  "x": 0,
+                  "y": 0,
+                  "name": "With",
+                  "geometry": "M0 121.9l5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.7-0.8 5.6-0.9 5.6-0.8 5.6 31.8 5.7-0.8 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6 32.2 5.7-0.8 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6 32.2 5.7-0.8 5.6-0.8 5.6-0.8 5.7-0.9 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8 5.6-0.8 5.6-0.9 5.7-0.8 5.6-0.8",
+                  "viewBox": [
+                    0,
+                    0,
+                    816,
+                    128
+                  ],
+                  "width": 816,
+                  "height": 128,
+                  "stroke": "#2a78d6",
+                  "strokeWidth": 2,
+                  "strokeLinejoin": "round",
+                  "strokeLinecap": "round"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "NHnrA",
+          "name": "Notes",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 4,
+          "children": [
+            {
+              "type": "text",
+              "id": "Aheio",
+              "name": "Note 1",
+              "fill": "#52514e",
+              "content": "Trigger and resume sizes are the medians of 142 real pitstops (author's log, Sep–Oct 2026).",
+              "fontFamily": "Inter",
+              "fontSize": 12
+            },
+            {
+              "type": "text",
+              "id": "FredJ",
+              "name": "Note 2",
+              "fill": "#52514e",
+              "content": "Re-read tokens are the sum of the context over every turn; the checkpoint and the files read after a resume are not counted.",
+              "fontFamily": "Inter",
+              "fontSize": 12
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Ral7y",
+      "x": 1920,
+      "y": 550,
+      "name": "D · Number left + chart",
+      "clip": true,
+      "width": 880,
+      "height": 400,
+      "fill": "#fcfcfb",
+      "cornerRadius": 16,
+      "stroke": "#e4e3df",
+      "strokeWidth": 1,
+      "layout": "none",
+      "children": [
+        {
+          "type": "path",
+          "id": "G6PJ3A",
+          "x": 330,
+          "y": 56,
+          "name": "Baseline",
+          "geometry": "M330 352l382 0",
+          "viewBox": [
+            330,
+            56,
+            382,
+            296
+          ],
+          "width": 382,
+          "height": 296,
+          "stroke": "#e4e3df",
+          "strokeWidth": 1.5
+        },
+        {
+          "type": "path",
+          "id": "uh24h",
+          "x": 330,
+          "y": 56,
+          "name": "Area without",
+          "geometry": "M330 342.5l2.6-2 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-2 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-2 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-2 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-2 2.7-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-2 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-2 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-2 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-2 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-2 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.7-1.9 2.6-2 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-2 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-2 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-2 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-2 0 228.3-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 2-2.7 1.9-2.6 1.9-2.6 1.9-2.7-74.5-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 2-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 2-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 2-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 2-2.7 1.9-2.6 1.9-2.6 1.9-2.7-74.5-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 2-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 2-2.6 1.9-2.7 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 2-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 2-2.6 1.9-2.7 1.9-2.6 1.9-2.6-73.5-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.7 1.9-2.6 2-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 2-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 2-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 2-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 1.9-2.6 1.9-2.7 1.9-2.6 2z",
+          "viewBox": [
+            330,
+            56,
+            382,
+            296
+          ],
+          "fill": {
+            "type": "gradient",
+            "gradientType": "linear",
+            "enabled": true,
+            "rotation": 180,
+            "size": {
+              "height": 1
+            },
+            "colors": [
+              {
+                "color": "#eb683433",
+                "position": 0
+              },
+              {
+                "color": "#eb683408",
+                "position": 1
+              }
+            ]
+          },
+          "width": 382,
+          "height": 296
+        },
+        {
+          "type": "path",
+          "id": "Ttk0H",
+          "x": 330,
+          "y": 56,
+          "name": "Area with",
+          "geometry": "M330 342.5l2.6-2 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-2 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-2 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-2 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-2 2.7-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6 73.5 2.6-1.9 2.7-1.9 2.6-1.9 2.6-2 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-2 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-2 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-2 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7 74.5 2.6-1.9 2.6-1.9 2.7-1.9 2.6-2 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-2 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-2 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-2 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.7 74.5 2.6-1.9 2.6-1.9 2.7-1.9 2.6-2 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 0 58.2-382 0z",
+          "viewBox": [
+            330,
+            56,
+            382,
+            296
+          ],
+          "fill": {
+            "type": "gradient",
+            "gradientType": "linear",
+            "enabled": true,
+            "rotation": 180,
+            "size": {
+              "height": 1
+            },
+            "colors": [
+              {
+                "color": "#2a78d640",
+                "position": 0.55
+              },
+              {
+                "color": "#2a78d605",
+                "position": 1
+              }
+            ]
+          },
+          "width": 382,
+          "height": 296
+        },
+        {
+          "type": "path",
+          "id": "eZATF",
+          "x": 330,
+          "y": 56,
+          "name": "Line without",
+          "geometry": "M330 342.5l2.6-2 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-2 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-2 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-2 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-2 2.7-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-2 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-2 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-2 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-2 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-2 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.7-1.9 2.6-2 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-2 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-2 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-2 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-2",
+          "viewBox": [
+            330,
+            56,
+            382,
+            296
+          ],
+          "width": 382,
+          "height": 296,
+          "stroke": "#eb6834",
+          "strokeWidth": 3,
+          "strokeLinejoin": "round",
+          "strokeLinecap": "round"
+        },
+        {
+          "type": "path",
+          "id": "zMlaK",
+          "x": 330,
+          "y": 56,
+          "name": "Line with",
+          "geometry": "M330 342.5l2.6-2 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-2 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-2 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-2 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-2 2.7-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6 73.5 2.6-1.9 2.7-1.9 2.6-1.9 2.6-2 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-2 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-2 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-2 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7 74.5 2.6-1.9 2.6-1.9 2.7-1.9 2.6-2 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-2 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-2 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-2 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.7 74.5 2.6-1.9 2.6-1.9 2.7-1.9 2.6-2 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9 2.6-1.9 2.7-1.9 2.6-1.9",
+          "viewBox": [
+            330,
+            56,
+            382,
+            296
+          ],
+          "width": 382,
+          "height": 296,
+          "stroke": "#2a78d6",
+          "strokeWidth": 3,
+          "strokeLinejoin": "round",
+          "strokeLinecap": "round"
+        },
+        {
+          "type": "ellipse",
+          "id": "vX9mZ",
+          "x": 458.35862068965514,
+          "y": 239.05806451612904,
+          "name": "Pitstop 51",
+          "fill": "#2a78d6",
+          "width": 12,
+          "height": 12,
+          "stroke": "#fcfcfb",
+          "strokeWidth": 3,
+          "strokeAlignment": "outer"
+        },
+        {
+          "type": "ellipse",
+          "id": "NeBnv",
+          "x": 563.7379310344827,
+          "y": 238.10322580645163,
+          "name": "Pitstop 91",
+          "fill": "#2a78d6",
+          "width": 12,
+          "height": 12,
+          "stroke": "#fcfcfb",
+          "strokeWidth": 3,
+          "strokeAlignment": "outer"
+        },
+        {
+          "type": "ellipse",
+          "id": "N3I4K",
+          "x": 669.1172413793104,
+          "y": 238.10322580645163,
+          "name": "Pitstop 131",
+          "fill": "#2a78d6",
+          "width": 12,
+          "height": 12,
+          "stroke": "#fcfcfb",
+          "strokeWidth": 3,
+          "strokeAlignment": "outer"
+        },
+        {
+          "type": "text",
+          "id": "Oc9se",
+          "x": 726,
+          "y": 57.548387096774206,
+          "name": "Label without",
+          "fill": "#0b0b0b",
+          "content": "without pitstop",
+          "lineHeight": 1,
+          "fontFamily": "Inter",
+          "fontSize": 17,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "gM45t",
+          "x": 726,
+          "y": 285.7548387096774,
+          "name": "Label with",
+          "fill": "#0b0b0b",
+          "content": "with pitstop",
+          "lineHeight": 1,
+          "fontFamily": "Inter",
+          "fontSize": 17,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "YqwyT",
+          "x": 402.35862068965514,
+          "y": 221.05806451612904,
+          "name": "Peak label",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 56,
+          "content": "226K",
+          "lineHeight": 1,
+          "textAlign": "right",
+          "fontFamily": "Inter",
+          "fontSize": 15,
+          "fontWeight": "500"
+        },
+        {
+          "type": "text",
+          "id": "M3xBs",
+          "x": 476.99310344827586,
+          "y": 322.5806451612903,
+          "name": "Trough label",
+          "fill": "#8a8984",
+          "content": "70K",
+          "lineHeight": 1,
+          "fontFamily": "Inter",
+          "fontSize": 15,
+          "fontWeight": "500"
+        },
+        {
+          "type": "text",
+          "id": "m3k8Ri",
+          "x": 40,
+          "y": 120,
+          "name": "Hero",
+          "fill": "#0b0b0b",
+          "content": "−57%",
+          "lineHeight": 1,
+          "fontFamily": "Inter",
+          "fontSize": 96,
+          "fontWeight": "700",
+          "letterSpacing": -3
+        },
+        {
+          "type": "text",
+          "id": "fmzdc",
+          "x": 44,
+          "y": 232,
+          "name": "Hero caption",
+          "fill": "#52514e",
+          "content": "tokens re-read",
+          "lineHeight": 1,
+          "fontFamily": "Inter",
+          "fontSize": 22,
+          "fontWeight": "500"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "ALxnQ",
+      "x": 1920,
+      "y": 1030,
+      "name": "E · Number inside chart",
+      "clip": true,
+      "width": 880,
+      "height": 400,
+      "fill": "#fcfcfb",
+      "cornerRadius": 16,
+      "stroke": "#e4e3df",
+      "strokeWidth": 1,
+      "layout": "none",
+      "children": [
+        {
+          "type": "path",
+          "id": "X1D0Fr",
+          "x": 40,
+          "y": 40,
+          "name": "Baseline",
+          "geometry": "M40 352l672 0",
+          "viewBox": [
+            40,
+            40,
+            672,
+            312
+          ],
+          "width": 672,
+          "height": 312,
+          "stroke": "#e4e3df",
+          "strokeWidth": 1.5
+        },
+        {
+          "type": "path",
+          "id": "zkjN7",
+          "x": 40,
+          "y": 40,
+          "name": "Area without",
+          "geometry": "M40 341.9l4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2.1 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2.1 4.6-2 4.6-2 4.7-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2.1 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2.1 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2.1 4.7-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 0 240.5-4.6 2-4.7 2-4.6 2-4.6 2.1-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2.1-4.6 2-4.7-78.5-4.6 2-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2-4.6 2.1-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2-4.6 2-4.7 2.1-4.6 2-4.6 2-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2-4.6 2.1-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2.1-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2.1-4.6 2-4.7-78.5-4.6 2-4.6 2-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2.1-4.6 2-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2-4.6 2.1-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2-4.7 2-4.6 2-4.6 2.1-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2.1-4.6 2-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2-4.6 2-4.7 2.1-4.6 2-4.6-77.5-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2-4.6 2.1-4.7 2-4.6 2-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2-4.6 2.1-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2.1-4.6 2-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2-4.6 2.1-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2.1-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2.1-4.6 2-4.7 2-4.6 2-4.6 2-4.7 2-4.6 2z",
+          "viewBox": [
+            40,
+            40,
+            672,
+            312
+          ],
+          "fill": {
+            "type": "gradient",
+            "gradientType": "linear",
+            "enabled": true,
+            "rotation": 180,
+            "size": {
+              "height": 1
+            },
+            "colors": [
+              {
+                "color": "#eb683433",
+                "position": 0
+              },
+              {
+                "color": "#eb683408",
+                "position": 1
+              }
+            ]
+          },
+          "width": 672,
+          "height": 312
+        },
+        {
+          "type": "path",
+          "id": "v5DDel",
+          "x": 40,
+          "y": 40,
+          "name": "Area with",
+          "geometry": "M40 341.9l4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6 77.5 4.6-2 4.7-2.1 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7 78.5 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2.1 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.7 78.5 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 0 61.4-672 0z",
+          "viewBox": [
+            40,
+            40,
+            672,
+            312
+          ],
+          "fill": {
+            "type": "gradient",
+            "gradientType": "linear",
+            "enabled": true,
+            "rotation": 180,
+            "size": {
+              "height": 1
+            },
+            "colors": [
+              {
+                "color": "#2a78d640",
+                "position": 0.55
+              },
+              {
+                "color": "#2a78d605",
+                "position": 1
+              }
+            ]
+          },
+          "width": 672,
+          "height": 312
+        },
+        {
+          "type": "path",
+          "id": "n7Dmei",
+          "x": 40,
+          "y": 40,
+          "name": "Line without",
+          "geometry": "M40 341.9l4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2.1 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2.1 4.6-2 4.6-2 4.7-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2.1 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2.1 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2.1 4.7-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2",
+          "viewBox": [
+            40,
+            40,
+            672,
+            312
+          ],
+          "width": 672,
+          "height": 312,
+          "stroke": "#eb6834",
+          "strokeWidth": 3,
+          "strokeLinejoin": "round",
+          "strokeLinecap": "round"
+        },
+        {
+          "type": "path",
+          "id": "DWSO0",
+          "x": 40,
+          "y": 40,
+          "name": "Line with",
+          "geometry": "M40 341.9l4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6 77.5 4.6-2 4.7-2.1 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7 78.5 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2.1 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.7 78.5 4.6-2 4.6-2.1 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2 4.6-2 4.7-2 4.6-2.1 4.6-2 4.7-2 4.6-2",
+          "viewBox": [
+            40,
+            40,
+            672,
+            312
+          ],
+          "width": 672,
+          "height": 312,
+          "stroke": "#2a78d6",
+          "strokeWidth": 3,
+          "strokeLinejoin": "round",
+          "strokeLinecap": "round"
+        },
+        {
+          "type": "ellipse",
+          "id": "D321K",
+          "x": 270.35862068965514,
+          "y": 233.2774193548387,
+          "name": "Pitstop 51",
+          "fill": "#2a78d6",
+          "width": 12,
+          "height": 12,
+          "stroke": "#fcfcfb",
+          "strokeWidth": 3,
+          "strokeAlignment": "outer"
+        },
+        {
+          "type": "ellipse",
+          "id": "mggfM",
+          "x": 455.73793103448276,
+          "y": 232.27096774193546,
+          "name": "Pitstop 91",
+          "fill": "#2a78d6",
+          "width": 12,
+          "height": 12,
+          "stroke": "#fcfcfb",
+          "strokeWidth": 3,
+          "strokeAlignment": "outer"
+        },
+        {
+          "type": "ellipse",
+          "id": "tB7Ie",
+          "x": 641.1172413793104,
+          "y": 232.27096774193546,
+          "name": "Pitstop 131",
+          "fill": "#2a78d6",
+          "width": 12,
+          "height": 12,
+          "stroke": "#fcfcfb",
+          "strokeWidth": 3,
+          "strokeAlignment": "outer"
+        },
+        {
+          "type": "text",
+          "id": "iqNM1",
+          "x": 726,
+          "y": 42.064516129032256,
+          "name": "Label without",
+          "fill": "#0b0b0b",
+          "content": "without pitstop",
+          "lineHeight": 1,
+          "fontFamily": "Inter",
+          "fontSize": 17,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "NvApB",
+          "x": 726,
+          "y": 282.60645161290324,
+          "name": "Label with",
+          "fill": "#0b0b0b",
+          "content": "with pitstop",
+          "lineHeight": 1,
+          "fontFamily": "Inter",
+          "fontSize": 17,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "cgnMf",
+          "x": 214.35862068965514,
+          "y": 215.2774193548387,
+          "name": "Peak label",
+          "fill": "#8a8984",
+          "textGrowth": "fixed-width",
+          "width": 56,
+          "content": "226K",
+          "lineHeight": 1,
+          "textAlign": "right",
+          "fontFamily": "Inter",
+          "fontSize": 15,
+          "fontWeight": "500"
+        },
+        {
+          "type": "text",
+          "id": "AEsOC",
+          "x": 290.99310344827586,
+          "y": 320.7741935483871,
+          "name": "Trough label",
+          "fill": "#8a8984",
+          "content": "70K",
+          "lineHeight": 1,
+          "fontFamily": "Inter",
+          "fontSize": 15,
+          "fontWeight": "500"
+        },
+        {
+          "type": "text",
+          "id": "Wo9qI",
+          "x": 56,
+          "y": 64,
+          "name": "Hero",
+          "fill": "#0b0b0b",
+          "content": "−57%",
+          "lineHeight": 1,
+          "fontFamily": "Inter",
+          "fontSize": 96,
+          "fontWeight": "700",
+          "letterSpacing": -3
+        },
+        {
+          "type": "text",
+          "id": "w5N6a7",
+          "x": 60,
+          "y": 176,
+          "name": "Hero caption",
+          "fill": "#52514e",
+          "content": "tokens re-read",
+          "lineHeight": 1,
+          "fontFamily": "Inter",
+          "fontSize": 22,
+          "fontWeight": "500"
+        }
+      ]
+    }
+  ],
+  "fileToken": "c936353f-6d27-4794-b3c7-c32c06ab1778"
+}

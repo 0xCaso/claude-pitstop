@@ -28,9 +28,9 @@ class PluginFilesTest(unittest.TestCase):
         text = SKILL_PATH.read_text(encoding="utf-8")
         self.assertTrue(text.startswith("---\nname: pitstop\n"))
         for needle in ("## Commands", "## Automatic pitstop", "## Manual pitstop", "## Checkpoint procedure",
-                       "## Checkpoint content", "## Resuming", "🔋 **pitstop** · saltato:",
-                       "Scrivi /clear", "ripartenza: compact", "t3_thread_send", "Compact context",
-                       "/usr/bin/python3 ~/.claude/skills/pitstop/bin/pitstop"):
+                       "## Checkpoint content", "## Resuming", "🔋 **pitstop** · skipped:",
+                       "Run /clear", "restart: compact", "t3_thread_send", "Compact context",
+                       '/usr/bin/python3 "${CLAUDE_PLUGIN_ROOT}/bin/pitstop"'):
             with self.subTest(needle=needle):
                 self.assertIn(needle, text)
 

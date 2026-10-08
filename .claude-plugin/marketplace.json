@@ -1,0 +1,13 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "claude-pitstop",
+  "description": "pitstop: checkpoint long Claude Code sessions and restart them from a small context",
+  "owner": { "name": "Matteo Casonato" },
+  "plugins": [
+    {
+      "name": "pitstop",
+      "source": "./",
+      "description": "Checkpoint past a context threshold and resume after /clear or /compact"
+    }
+  ]
+}

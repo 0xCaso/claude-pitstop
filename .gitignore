@@ -7,3 +7,6 @@ __pycache__/
 
 # macOS
 .DS_Store
+
+# Waggle staging (exports sent for review)
+.waggle/

@@ -1,0 +1,14 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unit tests (system Python, standard library only)
+        run: /usr/bin/python3 -m unittest discover -s tests -t . -v
