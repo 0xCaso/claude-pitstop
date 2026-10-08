@@ -75,13 +75,14 @@ A `[pitstop]` hook message gives you: mode, context, cwd, background tasks, and 
      `mcp__t3-code__t3_thread_configuration` and `mcp__t3-code__t3_thread_send` exist (load them with ToolSearch
      if they are deferred):
      1. Call `t3_thread_configuration` without `threadId`: it returns this thread's id.
-     2. Call `t3_thread_send` with that `threadId`, `mode: "queue"` and exactly this `message`:
-        `/compact Riassunto di una sola riga: "Riprendi dal checkpoint pitstop."`
+     2. Call `t3_thread_send` with that `threadId`, `mode: "queue"` and, as `message`, exactly the text after
+        `coda 1: ` in mark-pending's output (today `/compact Riassunto di una sola riga: "Riprendi dal checkpoint pitstop."`).
         T3 Code runs it as soon as this turn ends; the compacted session receives the checkpoint by itself.
-     3. Only if step 2 succeeded, call `t3_thread_send` again with the same `threadId`, `mode: "queue"` and
-        exactly this `message`: `Riprendi dal checkpoint pitstop.`
+     3. Only if step 2 succeeded, call `t3_thread_send` again with the same `threadId`, `mode: "queue"` and, as
+        `message`, exactly the text after `coda 2: ` (today `Riprendi dal checkpoint pitstop.`).
         T3 Code delivers queued messages in order, so this one starts the first turn after the compaction and
-        the session resumes without the user typing anything.
+        the session resumes without the user typing anything. Never skip it: without it the session waits for
+        the user.
      4. Print, as the last line of your reply:
         `Compatto la conversazione a fine turno e riparto da solo dal checkpoint.`
         If step 3 failed, print instead:

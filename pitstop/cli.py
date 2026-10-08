@@ -141,7 +141,12 @@ def cmd_mark_pending(args: argparse.Namespace, ctx: Ctx) -> None:
     ctx.say("checkpoint registrato: %s" % record.checkpoint)
     ctx.say("finestra ripartenza: %d minuti" % config.resume_window_minutes)
     # SDK hosts (T3 Code) have no /clear: there the session compacts and resumes in place.
-    ctx.say("ripartenza: %s" % ("compact" if ctx.env.get(ENTRYPOINT_ENV, "").startswith("sdk") else "clear"))
+    restart = "compact" if ctx.env.get(ENTRYPOINT_ENV, "").startswith("sdk") else "clear"
+    ctx.say("ripartenza: %s" % restart)
+    if restart == "compact":
+        # Spelled out here and not only in SKILL.md: a session follows the skill text it loaded first (issue #1).
+        for line in messages.compact_queue_lines():
+            ctx.say(line)
     ctx.say(messages.done_line(tokens))
 
 

@@ -8,6 +8,16 @@ NOTIFY_TITLE = "pitstop"
 # The /compact the skill queues on its own thread in SDK hosts (T3 Code); the PreToolUse guard recognises it.
 COMPACT_SUMMARY = "Riprendi dal checkpoint pitstop."
 COMPACT_COMMAND = '/compact Riassunto di una sola riga: "%s"' % COMPACT_SUMMARY
+
+
+def compact_queue_lines() -> list:
+    """What the skill queues, in order, on its own thread in SDK hosts: the /compact, then the message that starts
+    the first turn after it. Printed by mark-pending, because a session keeps the skill text it loaded first."""
+    return [
+        'coda: con t3_thread_send (mode "queue"), in quest\'ordine:',
+        "coda 1: %s" % COMPACT_COMMAND,
+        "coda 2: %s" % COMPACT_SUMMARY,
+    ]
 BADGE = "🔋"
 
 

@@ -86,6 +86,19 @@ class MarkPendingTest(CliTestCase):
                 self.assertEqual(code, 0)
                 self.assertIn("ripartenza: %s\n" % mode, out)
 
+    def test_compact_restart_spells_out_both_queued_messages(self):
+        # The session follows the skill text it loaded first, so a later SKILL.md never reaches it: on
+        # 8 Oct 2026 a pitstop queued the /compact but not the «Riprendi» (issue #1). This output is always current.
+        checkpoint = self.tmp / "cp.md"
+        checkpoint.write_text("# Checkpoint", encoding="utf-8")
+        env = dict(SESSION_ENV, CLAUDE_CODE_ENTRYPOINT="sdk-ts")
+        out = self.cli("mark-pending", "--checkpoint", str(checkpoint), env=env)[1]
+        self.assertIn('coda 1: /compact Riassunto di una sola riga: "Riprendi dal checkpoint pitstop."\n', out)
+        self.assertIn("coda 2: Riprendi dal checkpoint pitstop.\n", out)
+        self.assertLess(out.index("coda 1:"), out.index("coda 2:"))
+        out = self.cli("mark-pending", "--checkpoint", str(checkpoint), env=dict(SESSION_ENV))[1]
+        self.assertNotIn("coda ", out)
+
     def test_cwd_defaults_to_transcript_and_plan_is_kept(self):
         checkpoint = self.tmp / "cp.md"
         checkpoint.write_text("# Checkpoint", encoding="utf-8")
