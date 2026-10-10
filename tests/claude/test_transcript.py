@@ -31,6 +31,19 @@ class ReadContextTokensTest(TempLayoutTestCase):
         ])
         self.assertEqual(read_context_tokens(path), 212010)
 
+    def test_usage_from_before_the_last_compaction_is_not_the_context(self):
+        boundary = {"type": "system", "subtype": "compact_boundary", "isSidechain": False}
+        path = self.transcript([assistant_line(message_id="old"), boundary, user_line()])
+        self.assertIsNone(read_context_tokens(path))
+        self.assertEqual(read_context_tokens(path, since_compaction=False), 212010)
+        path = self.transcript([assistant_line(message_id="old"), boundary, user_line("about compact_boundary"),
+                                assistant_line(message_id="new", cache_read=30000, cache_creation=42000)])
+        self.assertEqual(read_context_tokens(path), 72010)
+
+    def test_a_compaction_named_in_a_message_is_not_a_boundary(self):
+        path = self.transcript([assistant_line(message_id="a"), user_line('{"subtype": "compact_boundary"}')])
+        self.assertEqual(read_context_tokens(path), 212010)
+
     def test_partial_last_line_is_skipped(self):
         path = self.transcript([assistant_line()], trailing='{"type":"assistant","message":{"usage":{"input_')
         self.assertEqual(read_context_tokens(path), 212010)

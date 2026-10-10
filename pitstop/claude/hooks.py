@@ -156,9 +156,10 @@ def _handle_post_tool_batch(inp: HookInput, layout: Layout, notifier: Notifier, 
 
 
 def _is_fresh_session(transcript_path: str) -> bool:
-    """No assistant reply yet: the first prompt after /clear or in a new session."""
+    """No assistant reply yet: the first prompt after /clear or in a new session. A compacted session
+    is not fresh."""
     try:
-        return read_context_tokens(transcript_path) is None
+        return read_context_tokens(transcript_path, since_compaction=False) is None
     except FileNotFoundError:
         return True
 
