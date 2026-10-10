@@ -24,7 +24,7 @@ from pitstop.core.fsutil import append_line
 from pitstop.core.log import log_event, read_events
 from pitstop.core.paths import Layout, pitstop_home
 from pitstop.core.state import load_state, locked_state
-from pitstop.core.store import PendingRecord, mark_pending, new_checkpoint_path, write_checkpoint
+from pitstop.core.store import PendingRecord, mark_pending, new_checkpoint_path, prune_old_files, write_checkpoint
 
 SESSION_ENV = "CLAUDE_CODE_SESSION_ID"
 ENTRYPOINT_ENV = "CLAUDE_CODE_ENTRYPOINT"
@@ -126,6 +126,11 @@ def cmd_mark_pending(args: argparse.Namespace, ctx: Ctx) -> None:
             raise CliError("checkpoint not found: %s" % checkpoint)
         if checkpoint.stat().st_size == 0:
             raise CliError("empty checkpoint: %s" % checkpoint)
+    # SDK hosts (T3 Code) have no /clear: there the session compacts and resumes in place.
+    if ctx.env.get(AUTO_RESTART_ENV) == "1":
+        restart = "auto"
+    else:
+        restart = "compact" if ctx.env.get(ENTRYPOINT_ENV, "").startswith("sdk") else "clear"
     record = PendingRecord(
         checkpoint=str(checkpoint.resolve()),
         session_id=session,
@@ -135,18 +140,15 @@ def cmd_mark_pending(args: argparse.Namespace, ctx: Ctx) -> None:
         title=read_session_title(str(transcript)),
         plan=args.plan,
         project_dir=str(transcript.parent),
+        restart=restart,
     )
     mark_pending(ctx.layout, record)
+    prune_old_files(ctx.layout, ctx.now, keep=Path(record.checkpoint))
     log_event(ctx.layout, "cli", "pitstop_done", session_id=session, context_tokens=tokens,
               checkpoint=record.checkpoint)
     config, _ = load_config(ctx.layout)
     ctx.say("checkpoint registered: %s" % record.checkpoint)
     ctx.say("resume window: %d minutes" % config.resume_window_minutes)
-    # SDK hosts (T3 Code) have no /clear: there the session compacts and resumes in place.
-    if ctx.env.get(AUTO_RESTART_ENV) == "1":
-        restart = "auto"
-    else:
-        restart = "compact" if ctx.env.get(ENTRYPOINT_ENV, "").startswith("sdk") else "clear"
     ctx.say("restart: %s" % restart)
     if restart == "compact":
         # Spelled out here and not only in SKILL.md: a session follows the skill text it loaded first (issue #1).

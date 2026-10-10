@@ -23,6 +23,13 @@ class Decision:
     reason: str
 
 
+def segment_start(config: Config, state: SessionState, context_tokens: Optional[int]) -> None:
+    """A context back under the threshold was compacted or cleared outside pitstop: a new segment starts, so the
+    next request comes at the threshold again, not at the old request plus the step."""
+    if context_tokens is not None and context_tokens < config.threshold_tokens:
+        state.requested_at_tokens = None
+
+
 def decide(config: Config, state: SessionState, event: Event) -> Decision:
     """One request per segment (the stretch since the last resume), again after every retrigger step."""
     if not config.enabled:

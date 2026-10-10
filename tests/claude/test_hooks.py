@@ -63,6 +63,14 @@ class StopHookTest(HookTestCase):
         self.assertIsNotNone(self.call_hook("stop"))
         self.assertEqual([e["action"] for e in read_events(self.layout)], ["request", "request"])
 
+    def test_compaction_outside_pitstop_brings_the_next_request_back_to_the_threshold(self):
+        self.add_turn(220000)
+        self.assertIsNotNone(self.call_hook("stop"))
+        self.add_turn(50000)
+        self.assertIsNone(self.call_hook("stop"))
+        self.add_turn(205000)
+        self.assertIsNotNone(self.call_hook("stop"))
+
     def test_stop_hook_active_and_subagents_are_ignored(self):
         self.add_turn(300000)
         self.assertIsNone(self.call_hook("stop", stop_hook_active=True))
@@ -388,6 +396,40 @@ class CompactResumeHookTest(PendingMixin, HookTestCase):
     def test_subagent_compaction_is_ignored(self):
         self.pending()
         self.assertIsNone(self.call_hook("session-start", source="compact", agent_id="a1"))
+
+
+class InPlaceRecordHookTest(PendingMixin, HookTestCase):
+    """A record for a /compact restart belongs to its own session, and only until that session goes on."""
+
+    def setUp(self):
+        super().setUp()
+        self.add_turn(212000)
+
+    def test_a_fresh_session_in_the_same_project_does_not_take_it(self):
+        for restart in ("auto", "compact"):
+            with self.subTest(restart=restart):
+                self.pending(session_id="s0", restart=restart)
+                fresh = write_jsonl(self.tmp / "s2.jsonl", [user_line()])
+                self.assertIsNone(self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(fresh)))
+
+    def test_a_new_prompt_in_the_same_session_drops_it(self):
+        self.pending(restart="compact")
+        self.assertIsNone(self.call_hook("user-prompt-submit", prompt="ok, continua"))
+        self.assertIsNone(self.call_hook("session-start", source="compact"))
+        self.assertEqual([e["action"] for e in read_events(self.layout)], ["pending_dropped"])
+
+    def test_the_compact_and_the_resume_message_keep_it(self):
+        self.pending(restart="auto")
+        for prompt in (messages.COMPACT_COMMAND, messages.COMPACT_SUMMARY, None):
+            with self.subTest(prompt=prompt):
+                self.assertIsNone(self.call_hook("user-prompt-submit", prompt=prompt))
+        self.assertIsNotNone(self.call_hook("session-start", source="compact"))
+
+    def test_a_clear_record_is_left_for_the_fresh_session(self):
+        self.pending(restart="clear")
+        self.assertIsNone(self.call_hook("user-prompt-submit", prompt="ok"))
+        fresh = write_jsonl(self.tmp / "s2.jsonl", [user_line()])
+        self.assertIsNotNone(self.call_hook("user-prompt-submit", session_id="s2", transcript_path=str(fresh)))
 
 
 class CompactGuardHookTest(PendingMixin, HookTestCase):

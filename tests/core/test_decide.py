@@ -2,7 +2,7 @@ import unittest
 from pathlib import Path
 
 from pitstop.core.config import Config
-from pitstop.core.decide import NOOP, REQUEST, Decision, Event, decide
+from pitstop.core.decide import NOOP, REQUEST, Decision, Event, decide, segment_start
 from pitstop.core.state import SessionState
 
 
@@ -51,6 +51,17 @@ class DecideTest(unittest.TestCase):
         self.state.requested_at_tokens = 60000
         self.assertEqual(decide(config, self.state, stop(69999)).action, NOOP)
         self.assertEqual(decide(config, self.state, stop(70000)).action, REQUEST)
+
+    def test_context_back_under_the_threshold_starts_a_new_segment(self):
+        # A /compact outside pitstop: without the reset the next request would wait until 270K.
+        self.state.requested_at_tokens = 220000
+        segment_start(self.config, self.state, 230000)
+        self.assertEqual(self.state.requested_at_tokens, 220000)
+        segment_start(self.config, self.state, None)
+        self.assertEqual(self.state.requested_at_tokens, 220000)
+        segment_start(self.config, self.state, 50000)
+        self.assertIsNone(self.state.requested_at_tokens)
+        self.assertEqual(decide(self.config, self.state, stop(200000)), Decision(REQUEST, "threshold"))
 
 
 class CoreIndependenceTest(unittest.TestCase):

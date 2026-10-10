@@ -106,7 +106,7 @@ A `[pitstop]` hook message gives you: mode, context, cwd, background tasks, and 
 ## Checkpoint content
 
 Markdown, in the language of the conversation, at most about 4K tokens. It points to files and artifacts and
-never summarizes them.
+never summarizes them. Text that exists only in the conversation is the exception: see "Chat-only text" below.
 
 ```markdown
 # pitstop checkpoint — <session topic>
@@ -131,6 +131,9 @@ never summarizes them.
 - Quote user preferences word for word.
 - Cite files as `path:line`; name specs, plans, ledgers and PRs by path or URL.
 - Superpowers: point to spec, plan, ledger and workspace; name the current task and the open decisions. Do not restate them.
+- Chat-only text: text the next action needs that no file holds (a table or list the user pasted, figures or
+  examples given in chat, your last answer when the next action builds on it) goes in word for word. If it is
+  too long, save it to a file next to the checkpoint and cite that file. Never replace it with a description.
 - Leave out secrets, tokens, passwords and personal data.
 - Write `—` under an empty section.
 

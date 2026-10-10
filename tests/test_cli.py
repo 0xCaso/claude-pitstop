@@ -85,6 +85,7 @@ class MarkPendingTest(CliTestCase):
                 code, out = self.cli("mark-pending", "--checkpoint", str(checkpoint), env=env)
                 self.assertEqual(code, 0)
                 self.assertIn("restart: %s\n" % mode, out)
+                self.assertEqual(self.consume().restart, mode)
 
     def test_restart_is_automatic_where_the_hooks_module_is_loaded(self):
         checkpoint = self.tmp / "cp.md"
