@@ -86,6 +86,18 @@ class MarkPendingTest(CliTestCase):
                 self.assertEqual(code, 0)
                 self.assertIn("restart: %s\n" % mode, out)
 
+    def test_restart_is_automatic_where_the_hooks_module_is_loaded(self):
+        checkpoint = self.tmp / "cp.md"
+        checkpoint.write_text("# Checkpoint", encoding="utf-8")
+        for entrypoint, mode in (("cli", "auto"), (None, "auto"), ("sdk-cli", "auto")):
+            with self.subTest(entrypoint=entrypoint):
+                env = dict(SESSION_ENV, PITSTOP_AUTO_RESTART="1")
+                if entrypoint is not None:
+                    env["CLAUDE_CODE_ENTRYPOINT"] = entrypoint
+                code, out = self.cli("mark-pending", "--checkpoint", str(checkpoint), env=env)
+                self.assertEqual(code, 0)
+                self.assertIn("restart: %s\n" % mode, out)
+
     def test_compact_restart_spells_out_both_queued_messages(self):
         # The session follows the skill text it loaded first, so a later SKILL.md never reaches it: on
         # 8 Oct 2026 a pitstop queued the /compact but not the resume message (issue #1). This output is always current.

@@ -28,6 +28,8 @@ from pitstop.core.store import PendingRecord, mark_pending, new_checkpoint_path,
 
 SESSION_ENV = "CLAUDE_CODE_SESSION_ID"
 ENTRYPOINT_ENV = "CLAUDE_CODE_ENTRYPOINT"
+# Set by hooks/register.ts where it will restart the session itself (terminal and `claude -p`, not SDK hosts).
+AUTO_RESTART_ENV = "PITSTOP_AUTO_RESTART"
 
 
 class CliError(Exception):
@@ -141,7 +143,10 @@ def cmd_mark_pending(args: argparse.Namespace, ctx: Ctx) -> None:
     ctx.say("checkpoint registered: %s" % record.checkpoint)
     ctx.say("resume window: %d minutes" % config.resume_window_minutes)
     # SDK hosts (T3 Code) have no /clear: there the session compacts and resumes in place.
-    restart = "compact" if ctx.env.get(ENTRYPOINT_ENV, "").startswith("sdk") else "clear"
+    if ctx.env.get(AUTO_RESTART_ENV) == "1":
+        restart = "auto"
+    else:
+        restart = "compact" if ctx.env.get(ENTRYPOINT_ENV, "").startswith("sdk") else "clear"
     ctx.say("restart: %s" % restart)
     if restart == "compact":
         # Spelled out here and not only in SKILL.md: a session follows the skill text it loaded first (issue #1).

@@ -28,7 +28,9 @@ files re-read after each resume. The saving in your sessions depends on how they
 1. The context passes the threshold. pitstop asks Claude to stop at the next clean point.
 2. Claude writes the checkpoint and prints `🔋 pitstop · done at 226K → back on track with a clean context`.
 3. The session restarts:
-   - **Terminal:** you run `/clear` and send any message. The checkpoint is injected into it.
+   - **Terminal:** on a Claude Code that loads hooks modules, pitstop runs `/compact` when the turn ends and
+     sends `Resume from the pitstop checkpoint.` by itself. On an older one, you run `/clear` and send any
+     message, and the checkpoint is injected into it.
    - **T3 Code and other SDK hosts** (no `/clear` there): Claude queues `/compact` on its own thread, followed by
      `Resume from the pitstop checkpoint.`, so the compacted session picks up by itself.
 4. Claude re-reads only the files the next action needs and prints three lines: goal, state, next action.
@@ -113,6 +115,9 @@ An invalid file turns pitstop off and says why once, until the file changes.
   if it is in the same project and within the resume window.
 - After `/compact`, a `SessionStart` hook injects the session's own checkpoint, once. It never takes another
   session's checkpoint.
+- In the terminal and under `claude -p`, the hooks module `hooks/register.ts` sees the end of the turn that registered a checkpoint,
+  runs `/compact` and queues the resume message, once per checkpoint. It sets `PITSTOP_AUTO_RESTART=1`, which
+  is how `pitstop mark-pending` knows to answer `restart: auto`.
 - A `PreToolUse` hook blocks pitstop's `/compact` in T3 Code unless the session has just registered a checkpoint,
   so a skipped pitstop can never compact the conversation.
 - A matching checkpoint past the resume window but under 24 hours old is not injected; the new session gets a
@@ -131,6 +136,7 @@ instruction.
 ```bash
 /usr/bin/python3 -m unittest discover -s tests -t . -v
 claude plugin validate --strict .
+claude plugin test .
 /usr/bin/python3 assets/make_chart.py assets   # regenerate the chart
 ```
 
