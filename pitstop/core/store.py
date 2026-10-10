@@ -16,6 +16,10 @@ from pitstop.core.state import session_key
 # around long enough for the fresh session to be told it expired (see consume_expired_pending), up to
 # this horizon. Past the horizon it is deleted silently by the sweep, like an expired record always was.
 EXPIRED_NOTICE_HORIZON_SECONDS = 24 * 60 * 60
+# Old checkpoints and per-session state files are deleted past this age (checkpoints hold conversation text).
+RETENTION_SECONDS = 30 * 24 * 60 * 60
+# Restarts that keep the same session (/compact): their record belongs to that session only.
+IN_PLACE_RESTARTS = ("auto", "compact")
 
 
 @dataclass(frozen=True)
@@ -28,6 +32,11 @@ class PendingRecord:
     title: Optional[str] = None
     plan: Optional[str] = None
     project_dir: Optional[str] = None
+    restart: Optional[str] = None  # "clear", "auto" or "compact"; None in records written before it existed
+
+    @property
+    def in_place(self) -> bool:
+        return self.restart in IN_PLACE_RESTARTS
 
 
 def new_checkpoint_path(layout: Layout, session_id: str, now: float) -> Path:
@@ -84,6 +93,7 @@ def _read_record(path: Path) -> Optional[PendingRecord]:
         and (record.title is None or isinstance(record.title, str))
         and (record.plan is None or isinstance(record.plan, str))
         and (record.project_dir is None or isinstance(record.project_dir, str))
+        and (record.restart is None or isinstance(record.restart, str))
     )
     return record if valid else None
 
@@ -132,13 +142,16 @@ def _sweep(paths: List[Path], now: float, window: float) -> List[Tuple[Path, Pen
 def _match_levels(pairs: List[Tuple[Path, PendingRecord]], session_id: str, cwd: str,
                   project_dir: Optional[str]) -> List[Tuple[Path, PendingRecord]]:
     """Group by match level (same session id, then project folder, then cwd) and concatenate in that
-    priority order; each level keeps the newest-first order it was given in."""
+    priority order; each level keeps the newest-first order it was given in. A record for an in-place restart
+    matches its own session only: a fresh session never takes it."""
     same_id: List[Tuple[Path, PendingRecord]] = []
     same_project: List[Tuple[Path, PendingRecord]] = []
     same_cwd: List[Tuple[Path, PendingRecord]] = []
     for path, record in pairs:
         if record.session_id == session_id:
             same_id.append((path, record))
+        elif record.in_place:
+            continue
         elif (record.project_dir is not None and project_dir is not None
               and os.path.realpath(record.project_dir) == os.path.realpath(project_dir)):
             same_project.append((path, record))
@@ -222,3 +235,34 @@ def has_session_pending(layout: Layout, session_id: str, now: float, window_minu
         if record is not None and record.session_id == session_id and now - record.created_at <= window:
             return True
     return False
+
+
+def drop_in_place_pending(layout: Layout, session_id: str) -> int:
+    """Delete this session's records for an in-place restart and return how many. Called when the session
+    goes on without restarting: a later /compact or a fresh session must not bring that checkpoint back."""
+    try:
+        paths = _list_records(layout)
+    except FileNotFoundError:
+        return 0
+    dropped = 0
+    for path in paths:
+        record = _read_record(path)
+        if record is not None and record.session_id == session_id and record.in_place and _claim(path):
+            dropped += 1
+    return dropped
+
+
+def prune_old_files(layout: Layout, now: float, keep: Path, max_age: float = RETENTION_SECONDS) -> None:
+    """Delete checkpoints and session state files (and their locks) not modified for max_age, except keep (the
+    checkpoint just registered, whatever its age). Best effort."""
+    for folder, suffixes in ((layout.checkpoints_dir, (".md",)), (layout.state_dir, (".json", ".lock"))):
+        try:
+            paths = list(folder.iterdir())
+        except OSError:
+            continue
+        for path in paths:
+            if path.resolve() == keep.resolve() or path.suffix not in suffixes or path.name.startswith("."):
+                continue
+            if now - _mtime(path) > max_age:
+                with contextlib.suppress(OSError):
+                    path.unlink()

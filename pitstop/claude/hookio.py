@@ -21,6 +21,7 @@ class HookInput:
     background_tasks: int = 0
     tool_name: Optional[str] = None
     tool_input: Optional[Dict[str, Any]] = None
+    prompt: Optional[str] = None
 
 
 def _text(data: Dict[str, Any], key: str) -> Optional[str]:
@@ -51,6 +52,7 @@ def parse_hook_input(raw: str) -> HookInput:
         background_tasks=len(tasks) if isinstance(tasks, list) else 0,
         tool_name=_text(data, "tool_name"),
         tool_input=data.get("tool_input") if isinstance(data.get("tool_input"), dict) else None,
+        prompt=_text(data, "prompt"),
     )
 
 

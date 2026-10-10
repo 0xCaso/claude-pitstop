@@ -9,7 +9,7 @@ from pitstop.claude.hookio import HookInput, HookInputError, build_output, parse
 from pitstop.claude.notify import notify
 from pitstop.claude.transcript import TranscriptSchemaError, read_context_tokens
 from pitstop.core.config import Config, load_config, should_show_config_notice
-from pitstop.core.decide import REQUEST, Event, decide
+from pitstop.core.decide import REQUEST, Event, decide, segment_start
 from pitstop.core.fsutil import LockTimeout
 from pitstop.core.log import log_event
 from pitstop.core.paths import Layout
@@ -18,6 +18,7 @@ from pitstop.core.store import (
     PendingRecord,
     consume_expired_pending,
     consume_pending,
+    drop_in_place_pending,
     has_pending,
     has_session_pending,
 )
@@ -126,6 +127,7 @@ def _handle_stop(inp: HookInput, layout: Layout, notifier: Notifier, now: float)
             return None
         tokens = _context_tokens(layout, state, "stop", inp.transcript_path)
         _maybe_log_resume_base(layout, state, "stop", inp.session_id, tokens)
+        segment_start(config, state, tokens)
         event = Event("stop", tokens, stop_hook_active=inp.stop_hook_active)
         if decide(config, state, event).action != REQUEST:
             return None
@@ -149,6 +151,7 @@ def _handle_post_tool_batch(inp: HookInput, layout: Layout, notifier: Notifier, 
             state.last_context_tokens = _context_tokens(layout, state, "post_tool_batch", inp.transcript_path)
         tokens = state.last_context_tokens
         _maybe_log_resume_base(layout, state, "post_tool_batch", inp.session_id, tokens)
+        segment_start(config, state, tokens)
         if decide(config, state, Event("post_tool_batch", tokens)).action != REQUEST:
             return None
         state.requested_at_tokens = tokens
@@ -168,6 +171,7 @@ def _handle_user_prompt_submit(inp: HookInput, layout: Layout, notifier: Notifie
     if not has_pending(layout):
         return None
     if not _is_fresh_session(inp.transcript_path):
+        _drop_unused_in_place_record(inp, layout)
         return None
     # Resume even if pitstop was switched off meanwhile: the checkpoint exists and /clear already happened.
     config, _ = load_config(layout)
@@ -187,6 +191,17 @@ def _handle_user_prompt_submit(inp: HookInput, layout: Layout, notifier: Notifie
             additional_context=messages.expired_context(expired),
         )
     return _resume(inp, layout, notifier, config, record, "UserPromptSubmit", "user_prompt_submit")
+
+
+def _drop_unused_in_place_record(inp: HookInput, layout: Layout) -> None:
+    """A user prompt in a session that still holds its /compact checkpoint: the restart did not happen and the
+    session goes on, so the checkpoint is stale. Slash commands (the /compact itself), pitstop's own resume
+    message and an input without a prompt leave it alone."""
+    prompt = (inp.prompt or "").strip()
+    if not prompt or prompt.startswith("/") or prompt == messages.COMPACT_SUMMARY:
+        return
+    if drop_in_place_pending(layout, inp.session_id):
+        log_event(layout, "user_prompt_submit", "pending_dropped", session_id=inp.session_id)
 
 
 def _handle_session_start(inp: HookInput, layout: Layout, notifier: Notifier, now: float) -> Optional[str]:

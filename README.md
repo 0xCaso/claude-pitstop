@@ -109,12 +109,14 @@ An invalid file turns pitstop off and says why once, until the file changes.
 ## How it works
 
 - `Stop` and `PostToolBatch` hooks read the context size from the session transcript. Past the threshold they ask
-  Claude for a pitstop, once per segment.
+  Claude for a pitstop, once per segment. A context back under the threshold (a `/compact` outside pitstop) starts
+  a new segment.
 - The `pitstop` skill writes the checkpoint, registers it with the `bin/pitstop` CLI and restarts the session.
 - After `/clear`, a `UserPromptSubmit` hook injects the checkpoint into the first message of the new session, once,
   if it is in the same project and within the resume window.
 - After `/compact`, a `SessionStart` hook injects the session's own checkpoint, once. It never takes another
-  session's checkpoint.
+  session's checkpoint, and a checkpoint meant for `/compact` never goes to another session. If the user sends a
+  new message before the compaction, that checkpoint is dropped: the session went on without it.
 - In the terminal and under `claude -p`, the hooks module `hooks/register.ts` sees the end of the turn that registered a checkpoint,
   runs `/compact` and queues the resume message, once per checkpoint. It sets `PITSTOP_AUTO_RESTART=1`, which
   is how `pitstop mark-pending` knows to answer `restart: auto`.
@@ -129,7 +131,7 @@ An invalid file turns pitstop off and says why once, until the file changes.
 Everything stays on your machine, in `~/.claude/pitstop/` (override with `PITSTOP_HOME`): `config.json`,
 `checkpoints/`, `pending/`, `state/`, `log.jsonl` and `gaps.jsonl`. The log holds token counts and states, not
 conversation text. Checkpoints do contain a summary of your session, written without secrets or personal data by
-instruction.
+instruction. Checkpoints and session state files older than 30 days are deleted at the next pitstop.
 
 ## Development
 

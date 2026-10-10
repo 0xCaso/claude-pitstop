@@ -1,3 +1,4 @@
+import os
 import stat
 from unittest.mock import patch
 
@@ -9,6 +10,7 @@ from pitstop.core.store import (
     has_pending,
     mark_pending,
     new_checkpoint_path,
+    prune_old_files,
     write_checkpoint,
 )
 from tests.helpers import NOW, TempLayoutTestCase
@@ -212,3 +214,22 @@ class HasPendingTest(TempLayoutTestCase):
     def test_true_after_mark_pending(self):
         mark_pending(self.layout, record())
         self.assertTrue(has_pending(self.layout))
+
+
+class PruneOldFilesTest(TempLayoutTestCase):
+    def test_deletes_old_checkpoints_and_state_but_keeps_recent_and_kept_ones(self):
+        old = NOW - 31 * 24 * 60 * 60
+        files = {name: self.layout.base / name for name in (
+            "checkpoints/old.md", "checkpoints/new.md", "checkpoints/kept.md", "state/old.json", "state/old.lock",
+            "state/new.json", "checkpoints/notes.txt")}
+        for name, path in files.items():
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("x", encoding="utf-8")
+            stamp = NOW - 60 if "new" in name else old
+            os.utime(path, (stamp, stamp))
+        prune_old_files(self.layout, NOW, keep=files["checkpoints/kept.md"])
+        left = sorted(name for name, path in files.items() if path.exists())
+        self.assertEqual(left, ["checkpoints/kept.md", "checkpoints/new.md", "checkpoints/notes.txt", "state/new.json"])
+
+    def test_missing_folders_are_fine(self):
+        prune_old_files(self.layout, NOW, keep=self.layout.checkpoints_dir / "x.md")
