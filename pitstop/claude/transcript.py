@@ -43,20 +43,28 @@ def _int_field(usage: Dict[str, Any], key: str) -> int:
     return value
 
 
-def read_context_tokens(transcript_path: str, max_bytes: int = MAX_SCAN_BYTES) -> Optional[int]:
+def read_context_tokens(transcript_path: str, max_bytes: int = MAX_SCAN_BYTES,
+                        since_compaction: bool = True) -> Optional[int]:
     """Context of the last main-thread assistant message: input + cache read + cache creation tokens.
 
     Streaming writes one line per content block, all with the same message id and usage, so the
     last valid line already is the deduplicated value. Returns None when there is no assistant
-    usage yet. Never estimates."""
+    usage yet, or none since the last compaction: a message from before it measures a context that
+    is gone, and a hook can run before the first message after it reaches the file. With
+    since_compaction=False the compaction is ignored. Never estimates."""
     for line in _lines_from_end(transcript_path, max_bytes):
-        if b'"usage"' not in line:
+        is_boundary = since_compaction and b'"compact_boundary"' in line
+        if not is_boundary and b'"usage"' not in line:
             continue
         try:
             entry = json.loads(line)
         except ValueError:
             continue
-        if not isinstance(entry, dict) or entry.get("type") != "assistant" or entry.get("isSidechain") is True:
+        if not isinstance(entry, dict) or entry.get("isSidechain") is True:
+            continue
+        if is_boundary and entry.get("type") == "system" and entry.get("subtype") == "compact_boundary":
+            return None
+        if entry.get("type") != "assistant":
             continue
         message = entry.get("message")
         if not isinstance(message, dict):
