@@ -73,6 +73,11 @@ A `[pitstop]` hook message gives you: mode, context, cwd, background tasks, and 
      `Run /clear, then send any message (for example "resume"): I'll pick up from the checkpoint within N minutes.`
      Then end your turn. Do not call `mcp__ccd_session_mgmt__clear_session`: the desktop app drops the clear it
      queues.
+   - **`restart: auto`** (terminal or `claude -p`, where Claude Code has loaded pitstop's hooks module). Print, as the last
+     line of your reply:
+     `Compacting the conversation at the end of this turn, then resuming from the checkpoint on my own.`
+     Then end your turn. Queue nothing and do not run `/compact` yourself: the module does both when the turn
+     ends.
    - **`restart: compact`** (T3 Code and other SDK hosts: `/clear` does not work there). If the tools
      `mcp__t3-code__t3_thread_configuration` and `mcp__t3-code__t3_thread_send` exist (load them with ToolSearch
      if they are deferred):

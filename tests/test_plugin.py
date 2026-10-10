@@ -13,7 +13,10 @@ class PluginFilesTest(unittest.TestCase):
         self.assertNotIn("skills", manifest)
 
     def test_hooks_call_bin_pitstop_with_system_python(self):
-        hooks = json.loads((REPO_ROOT / "hooks" / "hooks.json").read_text(encoding="utf-8"))["hooks"]
+        config = json.loads((REPO_ROOT / "hooks" / "hooks.json").read_text(encoding="utf-8"))
+        self.assertEqual(config["modules"], ["./register.ts"])
+        self.assertTrue((REPO_ROOT / "hooks" / "register.ts").is_file())
+        hooks = config["hooks"]
         self.assertEqual(set(hooks), {"Stop", "PostToolBatch", "UserPromptSubmit", "SessionStart", "PreToolUse"})
         self.assertEqual(hooks["SessionStart"][0]["matcher"], "compact")
         self.assertEqual(hooks["PreToolUse"][0]["matcher"], "mcp__t3-code__t3_thread_send")
@@ -29,13 +32,17 @@ class PluginFilesTest(unittest.TestCase):
         self.assertTrue(text.startswith("---\nname: pitstop\n"))
         for needle in ("## Commands", "## Automatic pitstop", "## Manual pitstop", "## Checkpoint procedure",
                        "## Checkpoint content", "## Resuming", "🔋 **pitstop** · skipped:",
-                       "Run /clear", "restart: compact", "t3_thread_send", "Compact context",
+                       "Run /clear", "restart: auto", "restart: compact", "t3_thread_send", "Compact context",
                        '/usr/bin/python3 "${CLAUDE_PLUGIN_ROOT}/bin/pitstop"'):
             with self.subTest(needle=needle):
                 self.assertIn(needle, text)
 
     def test_skill_queues_exactly_the_command_the_guard_recognises(self):
         self.assertIn("`%s`" % messages.COMPACT_COMMAND, SKILL_PATH.read_text(encoding="utf-8"))
+
+    def test_hooks_module_resumes_with_the_summary_the_session_start_hook_expects(self):
+        module = (REPO_ROOT / "hooks" / "register.ts").read_text(encoding="utf-8")
+        self.assertIn("const SUMMARY = '%s'" % messages.COMPACT_SUMMARY, module)
 
     def test_paths_used_by_hooks_exist(self):
         self.assertTrue(CLI_PATH.is_file())
